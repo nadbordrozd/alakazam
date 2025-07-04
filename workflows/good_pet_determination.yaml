@@ -1,0 +1,251 @@
+legendary_check:
+    question: "Is the Pokemon Legendary or Mythical?"
+    options:
+        yes: legendary_verdict
+        no: safety_assessment
+    sidebars:
+        - legendary_pokemon.md
+
+legendary_verdict:
+    verdict: "🔴 ABSOLUTELY NOT - Cosmic forces shouldn't be housebroken"
+
+safety_assessment:
+    question: "Does this Pokemon pose immediate physical danger to humans?"
+    options:
+        extremely_dangerous: danger_verdict
+        moderately_dangerous: danger_level_check
+        minimal_danger: size_check
+        completely_safe: size_check
+    sidebars:
+        - pokemon_accidents.md
+        - predatory_pokemon.md
+
+danger_verdict:
+    verdict: "🔴 TOO DANGEROUS - Your homeowner's insurance won't cover this"
+
+danger_level_check:
+    question: "Can the danger be managed with proper training and precautions?"
+    options:
+        yes: experienced_owner_check
+        no: danger_verdict
+
+experienced_owner_check:
+    question: "Are you an experienced Pokemon trainer?"
+    options:
+        yes: size_check
+        no: beginner_danger_verdict
+
+beginner_danger_verdict:
+    verdict: "🔴 NOT FOR BEGINNERS - Start with something that won't accidentally vaporize you"
+
+size_check:
+    question: "What size category does the Pokemon fall into?"
+    options:
+        tiny: tiny_assessment
+        small: small_assessment
+        medium: medium_assessment
+        large: large_assessment
+        massive: massive_verdict
+    sidebars:
+        - size_categories.md
+
+massive_verdict:
+    verdict: "🔴 TOO LARGE - Unless you live on a ranch, your neighbors will complain"
+
+tiny_assessment:
+    question: "Is the tiny Pokemon easy to lose or accidentally harm?"
+    options:
+        yes: tiny_fragile_verdict
+        no: intelligence_check
+
+tiny_fragile_verdict:
+    verdict: "🟡 PROCEED WITH CAUTION - High maintenance, easy to misplace"
+
+small_assessment:
+    question: "Does the small Pokemon have any destructive tendencies?"
+    options:
+        highly_destructive: small_destructive_verdict
+        mildly_destructive: intelligence_check
+        not_destructive: intelligence_check
+
+small_destructive_verdict:
+    verdict: "🟠 HIGH MAINTENANCE - Hope you like redecorating frequently"
+
+medium_assessment:
+    question: "Do you have adequate space for a medium-sized Pokemon?"
+    options:
+        yes: intelligence_check
+        no: space_verdict
+
+space_verdict:
+    verdict: "🔴 INSUFFICIENT SPACE - Pokemon needs room to roam"
+
+large_assessment:
+    question: "Do you have a large yard and outdoor space?"
+    options:
+        yes: large_space_check
+        no: space_verdict
+
+large_space_check:
+    question: "Are you prepared for the exercise and space requirements?"
+    options:
+        yes: intelligence_check
+        no: commitment_verdict
+
+commitment_verdict:
+    verdict: "🔴 INSUFFICIENT COMMITMENT - This is a lifestyle change"
+
+intelligence_check:
+    question: "What is the Pokemon's intelligence level?"
+    options:
+        highly_intelligent: smart_pokemon_check
+        moderately_intelligent: temperament_check
+        low_intelligence: simple_pokemon_check
+    sidebars:
+        - pokemon_intelligence.md
+
+smart_pokemon_check:
+    question: "Can you handle a Pokemon that might outsmart you?"
+    options:
+        yes: temperament_check
+        no: too_smart_verdict
+
+too_smart_verdict:
+    verdict: "🟠 CHALLENGING - May rearrange your furniture while you sleep"
+
+simple_pokemon_check:
+    question: "Are you okay with basic interaction and simple commands?"
+    options:
+        yes: temperament_check
+        no: intelligence_mismatch_verdict
+
+intelligence_mismatch_verdict:
+    verdict: "🟡 MISMATCHED EXPECTATIONS - Adjust your expectations"
+
+temperament_check:
+    question: "What is the Pokemon's general temperament?"
+    options:
+        friendly_affectionate: care_requirements_check
+        playful_energetic: energy_level_check
+        calm_docile: care_requirements_check
+        aloof_independent: independent_check
+        aggressive_territorial: aggressive_check
+
+aggressive_check:
+    question: "Can aggression be managed through training and socialization?"
+    options:
+        yes: experienced_trainer_check
+        no: temperament_verdict
+
+temperament_verdict:
+    verdict: "🔴 UNSUITABLE TEMPERAMENT - Some personalities don't mesh with home life"
+
+experienced_trainer_check:
+    question: "Do you have experience with difficult Pokemon personalities?"
+    options:
+        yes: care_requirements_check
+        no: beginner_temperament_verdict
+
+beginner_temperament_verdict:
+    verdict: "🔴 NOT FOR BEGINNERS - Start with a friendlier Pokemon"
+
+independent_check:
+    question: "Are you okay with a Pokemon that may not show much affection?"
+    options:
+        yes: care_requirements_check
+        no: affection_mismatch_verdict
+
+affection_mismatch_verdict:
+    verdict: "🟡 PERSONALITY MISMATCH - Consider your emotional needs"
+
+energy_level_check:
+    question: "Can you provide adequate exercise and mental stimulation?"
+    options:
+        yes: care_requirements_check
+        no: energy_mismatch_verdict
+
+energy_mismatch_verdict:
+    verdict: "🔴 ENERGY MISMATCH - Destructive behavior from boredom guaranteed"
+
+care_requirements_check:
+    question: "What are the Pokemon's special care requirements?"
+    options:
+        basic_care: special_abilities_check
+        moderate_care: care_commitment_check
+        intensive_care: intensive_care_check
+        exotic_requirements: exotic_care_check
+
+care_commitment_check:
+    question: "Are you prepared for above-average care commitment?"
+    options:
+        yes: special_abilities_check
+        no: care_verdict
+
+care_verdict:
+    verdict: "🔴 INADEQUATE PREPARATION - Pokemon welfare comes first"
+
+intensive_care_check:
+    question: "Do you have the time, money, and expertise for intensive care?"
+    options:
+        yes: special_abilities_check
+        no: care_verdict
+
+exotic_care_check:
+    question: "Can you provide specialized environments (aquatic, volcanic, etc.)?"
+    options:
+        yes: special_abilities_check
+        no: environment_verdict
+
+environment_verdict:
+    verdict: "🔴 CANNOT PROVIDE PROPER ENVIRONMENT - Pokemon health requires specific conditions"
+
+special_abilities_check:
+    question: "Does the Pokemon have potentially problematic special abilities?"
+    options:
+        no_special_abilities: lifestyle_check
+        minor_abilities: minor_ability_check
+        major_abilities: major_ability_check
+        reality_altering: reality_verdict
+    sidebars:
+        - unusual_abilities.md
+
+reality_verdict:
+    verdict: "🔴 REALITY-BREAKING POWERS - Your mortgage doesn't cover interdimensional damage"
+
+minor_ability_check:
+    question: "Can you manage minor abilities (sparks, small flames, etc.)?"
+    options:
+        yes: lifestyle_check
+        no: ability_management_verdict
+
+ability_management_verdict:
+    verdict: "🟡 ABILITY MANAGEMENT REQUIRED - Pokemon-proof your home first"
+
+major_ability_check:
+    question: "Are you experienced with managing powerful Pokemon abilities?"
+    options:
+        yes: lifestyle_check
+        no: major_ability_verdict
+
+major_ability_verdict:
+    verdict: "🔴 ABILITIES TOO POWERFUL - Leave this to the professionals"
+
+lifestyle_check:
+    question: "Does your lifestyle accommodate a Pokemon companion?"
+    options:
+        perfect_match: excellent_pet_verdict
+        good_match: good_pet_verdict
+        adequate_match: adequate_pet_verdict
+        poor_match: lifestyle_verdict
+
+lifestyle_verdict:
+    verdict: "🔴 LIFESTYLE INCOMPATIBLE - Pokemon deserve committed owners"
+
+excellent_pet_verdict:
+    verdict: "🟢 EXCELLENT PET CHOICE - Perfect match for your situation"
+
+good_pet_verdict:
+    verdict: "🟢 GOOD PET CHOICE - Should work well with minor adjustments"
+
+adequate_pet_verdict:
+    verdict: "🟡 ADEQUATE PET CHOICE - Manageable but requires effort"

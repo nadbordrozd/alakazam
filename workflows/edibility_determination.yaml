@@ -1,0 +1,132 @@
+legendary_check:
+    question: "Is the Pokemon Legendary or Mythical?"
+    options:
+        yes: legendary_verdict
+        no: intelligence_check
+
+legendary_verdict:
+    verdict: "🔴 DO NOT EAT - Cosmic consequences, world-ending events, divine retribution"
+
+intelligence_check:
+    question: "Does the Pokemon demonstrate human-level or higher intelligence?"
+    options:
+        yes: intelligence_verdict
+        no: composition_check
+
+intelligence_verdict:
+    verdict: "🔴 DO NOT EAT - Ethical concerns, potential conversation during meal"
+
+composition_check:
+    question: "What is the Pokemon primarily made of?"
+    options:
+        flesh_organic: size_check
+        rock_steel_mineral: inorganic_verdict
+        gas_energy_plasma: incorporeal_verdict
+        toxic_poison: poison_check
+
+inorganic_verdict:
+    verdict: "⚫ INEDIBLE - Dental damage, digestive blockage"
+
+incorporeal_verdict:
+    verdict: "⚫ INEDIBLE - Cannot be contained on plate"
+
+poison_check:
+    question: "What type of poison/toxicity does it possess?"
+    options:
+        surface_only: surface_toxin_verdict
+        internal_glands: internal_poison_verdict
+        radioactive_psychic: dangerous_toxin_verdict
+
+surface_toxin_verdict:
+    verdict: "🟡 CONDITIONALLY EDIBLE - Careful preparation required"
+
+internal_poison_verdict:
+    verdict: "🟠 HIGHLY DANGEROUS - Expert chef only"
+
+dangerous_toxin_verdict:
+    verdict: "🔴 DO NOT EAT - Unknown side effects"
+
+size_check:
+    question: "What size category does the Pokemon fall into?"
+    options:
+        tiny: tiny_assessment
+        normal: danger_assessment
+        large: large_assessment
+        massive: massive_verdict
+
+massive_verdict:
+    verdict: "🟠 IMPRACTICAL - Requires industrial cooking equipment"
+
+tiny_assessment:
+    question: "Can you catch enough to make a meal?"
+    options:
+        swarm_group: tiny_edible_verdict
+        solitary: tiny_impractical_verdict
+
+tiny_edible_verdict:
+    verdict: "🟢 EDIBLE - Popcorn shrimp style preparation"
+
+tiny_impractical_verdict:
+    verdict: "🟠 IMPRACTICAL - Single bite, not worth effort"
+
+danger_assessment:
+    question: "What is the Pokemon's danger level?"
+    options:
+        docile_weak: flavor_assessment
+        aggressive_manageable: risk_reward_assessment
+        extremely_dangerous: dangerous_verdict
+
+dangerous_verdict:
+    verdict: "🔴 TOO RISKY - Chef safety priority"
+
+large_assessment:
+    question: "Can this Pokemon feed 20+ people for a community feast?"
+    options:
+        yes: community_feast_verdict
+        tough_gamey: slow_cook_verdict
+        premium_cuts: gourmet_verdict
+
+community_feast_verdict:
+    verdict: "🟢 EXCELLENT CHOICE - Community event worthy"
+
+slow_cook_verdict:
+    verdict: "🟡 PROCEED WITH CAUTION - Slow cook recommended"
+
+gourmet_verdict:
+    verdict: "🟢 EXCELLENT CHOICE - Gourmet potential"
+
+flavor_assessment:
+    question: "What type is the Pokemon?"
+    options:
+        aquatic: aquatic_verdict
+        grass: herbivore_verdict
+        normal: safe_verdict
+        flying: poultry_verdict
+        other: standard_edible_verdict
+
+aquatic_verdict:
+    verdict: "🟢 LIKELY DELICIOUS - Seafood preparation recommended"
+
+herbivore_verdict:
+    verdict: "🟢 VEGETARIAN FRIENDLY - Herbivore diet produces tender meat"
+
+safe_verdict:
+    verdict: "🟢 SAFE BET - Familiar flavors expected"
+
+poultry_verdict:
+    verdict: "🟢 EXCELLENT CHOICE - Traditional bird preparation"
+
+standard_edible_verdict:
+    verdict: "🟢 EDIBLE - Standard preparation methods apply"
+
+risk_reward_assessment:
+    question: "Is the culinary reward worth the danger?"
+    options:
+        rare_exotic: high_risk_verdict
+        common_basic: not_worth_risk_verdict
+
+high_risk_verdict:
+    verdict: "🟠 HIGH-RISK, HIGH-REWARD - Expert preparation only"
+
+not_worth_risk_verdict:
+    verdict: "🔴 NOT WORTH THE RISK - Common flavor, high danger"

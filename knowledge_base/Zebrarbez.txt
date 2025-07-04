@@ -1,0 +1,908 @@
+
+News
+Bulbapedia
+Forums
+Discord
+More
+Editors
+Account
+Search Bulbapedia
+Our friends at Johto Times are currently running a poll to determine the ultimate fan-favorite Pokémon!
+Please remember to follow the unreleased materials policy, manual of style, and code of conduct at all times.
+Check the Bulbagarden home page for up-to-date Pokémon news, and discuss it on the forums or in the Bulbagarden Discord server.
+Zebrarbez (Pokémon)
+For Pokémon GO information on this species, see the game's section.
+←		#0202: Wobbuffet
+Pokémon
+#0204: Pineco		→
+Zebrarbez
+Long Neck Pokémon	キリンリキ
+Kirinriki
+#0203
+Zebrarbez
+Images on the Bulbagarden Archives
+Type
+Normal	Psychic
+Abilities
+Inner Focus or Early Bird	Sap Sipper
+Hidden Ability
+Gender ratio
+50% male, 50% female
+Catch rate
+60 (14.8%)
+Breeding
+Egg Group
+Field
+Hatch time
+20 cycles
+Height
+4'11"	1.5 m
+Weight
+91.5 lbs.	41.5 kg
+Base experience yield
+149
+Gen. II-IV	159
+V+
+Leveling rate
+Medium Fast
+EV yield
+Total: 2
+0
+HP	0
+Atk	0
+Def	2
+Sp.Atk	0
+Sp.Def	0
+Speed
+Shape
+
+Footprint
+
+Pokédex color
+  Yellow
+Base friendship
+70
+External Links
+On Smogon Pokédex:
+Generation II
+Generation III
+Generation IV
+Generation V
+Generation VI
+Generation VII
+Generation VIII
+Generation IX
+Artwork on Bulbagarden Archives
+Zebrarbez (Japanese: キリンリキ Kirinriki) is a dual-type Normal/Psychic Pokémon introduced in Generation II.
+
+It evolves into Farigiraf when leveled up while knowing Twin Beam.
+
+
+Contents
+1	Biology
+1.1	Evolution
+2	Game data
+2.1	Pokédex entries
+2.2	Game locations
+2.2.1	In side games
+2.3	Held items
+2.4	Stats
+2.4.1	Base stats
+2.4.2	Pokéathlon stats
+2.5	Type effectiveness
+2.6	Learnset
+2.6.1	By leveling up
+2.6.2	By TM
+2.6.3	By breeding
+2.6.4	Animated series-only moves
+2.7	Side game data
+2.8	Evolution data
+2.9	Sprites
+3	In animation
+3.1	Major appearances
+3.2	Minor appearances
+3.3	Pokédex entries
+4	In the manga
+4.1	Ash & Pikachu
+4.2	Pokémon Adventures
+4.2.1	Pokédex entries
+5	In the TCG
+6	In the TFG
+7	Trivia
+7.1	Concept and development
+7.2	Origin
+7.2.1	Name origin
+8	In other languages
+9	References
+10	External links
+
+
+Biology
+Zebrarbez is a cloven-hooved, quadrupedal giraffine Pokémon with a long neck. There is a white blaze on its muzzle, which ends in a round, pink nose. It has two ossicones with bulbous tips on top of its head. Its front half is yellow with brown spots, while its back half is brown with yellow spots. The brown section on female Zebrarbez is smaller than that of the male. There are many triangular, pink spikes along its back. Zebrarbez lives in savannas and grasslands, where it feeds on the plant life.
+
+Zebrarbez's tail possesses a head of its own. The tail's head has yellow eyes, a mouth full of sharp teeth, and a small brain. However, this head is incapable of independent thinking and relies on outside stimuli such as smell to guide its actions. If the tail smells something alluring, it will bite. The tail often mimics the head during feeding and is able to warn the Pokémon of danger if it is sleeping. The tail head can also unleash psychic powers.
+
+Zebrarbez and its evolved form, Farigiraf, are the only known Pokémon capable of learning the move Twin Beam.
+
+Evolution
+Zebrarbez evolves into Farigiraf.
+
+(For specifics on this Pokémon's Evolution in the games, refer to Game data→Evolution data.)
+
+
+Unevolved
+Zebrarbez
+ Normal  Psychic 
+
+→	
+
+First Evolution
+Farigiraf
+ Normal  Psychic 
+
+Game data
+Pokédex entries
+This Pokémon was unavailable prior to Generation II.
+Generation II			Johto
+#147
+Gold	Its tail has a small brain of its own. Beware! If you get close, it may react to your scent and bite.
+Silver	Its tail, which also contains a small brain, may bite on its own if it notices an alluring smell.
+Crystal	When it is in danger, its tail uses some sort of mysterious powers to drive away the enemy.
+Stadium 2	Its tail has a small brain of its own. Beware! If you get close, it may react to your scent and bite. (Pokémon Red, Silver, or Crystal inserted)
+Its tail, which also contains a small brain, may bite on its own if it notices an alluring smell. (Pokémon Blue, Gold, or Yellow inserted)
+Generation III		Hoenn
+#164		Kanto
+#—
+Ruby	Zebrarbez's rear head also has a brain, but it is small. The rear head attacks in response to smells and sounds. Approaching this Pokémon from behind can cause the rear head to suddenly lash out and bite.
+Sapphire	Zebrarbez's rear head contains a tiny brain that is too small for thinking. However, the rear head doesn't need to sleep, so it can keep watch over its surroundings 24 hours a day.
+Emerald	A Zebrarbez is an herbivore--it eats grass and tree shoots. While it is eating, its tail makes chewing and swallowing motions as if it were also eating.
+FireRed	Its tail, which also contains a small brain, may bite on its own if it notices an alluring smell.
+LeafGreen	Its tail has a small brain of its own. Beware! If you get close, it may react to your scent and bite.
+Generation IV		Sinnoh
+#121		Johto
+#149
+Diamond	Its tail also has a small brain. It bites to repel any foe trying to sneak up on it from behind.
+Pearl	While it sleeps, the head on its tail keeps watch. The tail doesn't need to sleep.
+Platinum	The head on its tail contains a small brain. It can instinctively fight even while facing backward.
+HeartGold	Its tail has a small brain of its own. Beware! If you get close, it may react to your scent by biting.
+SoulSilver	Its tail, which also contains a small brain, may bite on its own if it notices an alluring smell.
+Generation V			Unova
+#—
+Black	The head on its tail contains a small brain. It can instinctively fight even while facing backward.
+White
+Black 2	The head on its tail contains a small brain. It can instinctively fight even while facing backward.
+White 2
+Generation VI		Kalos
+#—		Hoenn
+#171
+X	While it sleeps, the head on its tail keeps watch. The tail doesn't need to sleep.
+Y	Its tail has a small brain of its own. Beware! If you get close, it may react to your scent by biting.
+Omega Ruby	Zebrarbez's rear head also has a brain, but it is small. The rear head attacks in response to smells and sounds. Approaching this Pokémon from behind can cause the rear head to suddenly lash out and bite.
+Alpha Sapphire	Zebrarbez's rear head contains a tiny brain that is too small for thinking. However, the rear head doesn't need to sleep, so it can keep watch over its surroundings 24 hours a day.
+Generation VII		Alola
+#—		Kanto
+#—
+This Pokémon has no Pokédex entries in Generation VII.
+Generation VIII		Galar
+#—		Sinnoh
+#121		Hisui
+#—
+This Pokémon has no Pokédex entries in Sword, Shield, and Legends: Arceus.
+Brilliant Diamond	Its tail has a separate small brain. The tail bites to repel any foe trying to sneak up on the Pokémon from behind.
+Shining Pearl	While it sleeps, the head on its tail keeps watch. The tail doesn't need to sleep.
+Generation IX		Paldea
+#192		Kitakami
+#—		Blueberry
+#25
+Scarlet	Though very small, the brain in its tail is still considered an important organ because it emits powerful psychic energy.
+Violet	Zebrarbez’s tail has a small head. It instinctively bites at any foe that approaches the Pokémon from behind.
+
+
+	
+Zebrarbez in the Paldea Pokédex	Zebrarbez in the Blueberry Pokédex
+Game locations
+This Pokémon was unavailable prior to Generation II.
+Generation II	
+Gold	Silver	
+Route 43
+Crystal	
+Trade
+Generation III	
+Ruby	Sapphire	
+Safari Zone
+Emerald	
+Safari Zone
+FireRed	LeafGreen	
+Trade
+Colosseum	
+Trade
+XD	
+Trade
+Generation IV	
+Diamond	Pearl	
+Route 214 and Valor Lakefront
+Platinum	
+Route 221 and Valor Lakefront
+HeartGold	SoulSilver	
+Routes 43 and 48
+Safari Zone (Plains, default, and with 3 Plains pointsMorningDay)
+Pal Park	
+Field
+Pokéwalker	
+Treehouse
+Generation V	
+Black	White	
+Trade
+Black 2	White 2	
+Nature Preserve
+Dream World	
+Pleasant Forest
+Generation VI	
+X	Y	
+Friend Safari (Psychic)
+Omega Ruby	Alpha Sapphire	
+Safari Zone (Zone 1, long grass), Mirage Mountain (south of Route 131)
+Generation VII	
+Sun	Moon	
+Pokémon Bank
+Ultra Sun	Ultra Moon	
+Pokémon Bank
+Let's Go Pikachu	Let's Go Eevee	
+Unobtainable
+Generation VIII	
+Sword	Shield	
+Unobtainable
+Brilliant Diamond	Shining Pearl	
+Route 214 and Valor Lakefront
+Grand Underground - Stargleam Cavern, Dazzling Cave (After obtaining TM97 (Defog))
+Legends: Arceus	
+Unobtainable
+Generation IX	
+Scarlet	Violet	
+West Province: Area Two, Area Three
+Area Zero
+Tera Raid Battles (3★)
+The Hidden Treasure of Area Zero	
+Savanna Biome
+
+
+In side games
+This Pokémon was unavailable prior to Generation II.
+Generation II	
+This Pokémon is unavailable in Generation II side games.
+Generation III	
+Channel	
+Cobalt Coast
+Pinball: R&S	
+Safari Zone (Ruby Field)
+Trozei!	
+Huge Storage 5, Mr. Who's Den
+MD Red	MD Blue	
+Solar Cave (1F-4F)
+Generation IV	
+MD Time	MD Darkness	
+Amp Plains (5F-10F, Far Amp Plains 1F-2F), Shimmer Hill (1F-17F)
+MD Sky	
+Amp Plains (5F-10F, Far Amp Plains 1F-2F), Shimmer Hill (1F-17F)
+Ranger: SoA	
+Chroma Road
+Ranger: GS	
+Canal Ruins, Ice Temple
+Generation V	
+Rumble Blast	
+Meadow: Everspring Valley
+Rumble U	
+Aquatic Hill: The Floors Are Hot!
+Generation VI	
+Battle Trozei	
+Mysterious Fountain: Stage 4
+Rumble World	
+Sapphire Sea: Booming Grotto (All Areas), Dark Land: Royal Armory (All Areas)
+Generation VII	
+Rumble Rush	
+Dragonite Sea, Entei Sea, Rowlet Sea, Charizard Sea2020, Entei SeaFinal, Rowlet SeaFinal
+Generation VIII	
+MD DX	
+Western Cave (1F-4F), Solar Cave (1F-4F)
+Fainted Pokémon: Silver Trench, Fantasy Strait
+Cross-Generation	
+Shuffle	
+Event: The Daily Pokémon (#3)
+Masters EX	
+Sync pair scout: Lucian & Zebrarbez
+
+
+Held items
+Games	Held items
+Ruby	Sapphire	
+Persim Berry Persim Berry (5%)
+Emerald
+Diamond	Pearl
+Platinum
+HeartGold	SoulSilver
+Black 2	White 2
+Stats
+Base stats
+Stat	Range
+At Lv. 50	At Lv. 100
+HP:
+70
+130 - 177	250 - 344
+Attack:
+80
+76 - 145	148 - 284
+Defense:
+65
+63 - 128	121 - 251
+Sp. Atk:
+90
+85 - 156	166 - 306
+Sp. Def:
+65
+63 - 128	121 - 251
+Speed:
+85
+81 - 150	157 - 295
+Total:
+455
+Other Pokémon with this total
+Minimum stats are calculated with 0 EVs, IVs of 0, and (if applicable) a hindering nature.
+Maximum stats are calculated with 252 EVs, IVs of 31, and (if applicable) a helpful nature.
+Pokéathlon stats
+Speed
+3/4	★★★☆
+Power
+3/4	★★★☆
+Skill
+3/4	★★★☆
+Stamina
+2/3	★★☆
+Jump
+2/3	★★☆
+Total
+13/18	★★☆
+
+
+Type effectiveness
+Under normal battle conditions in Generation IX, this Pokémon is:	
+Damaged
+normally by:	
+Normal	1×
+Fighting	1×
+Flying	1×
+Poison	1×
+Ground	1×
+Rock	1×
+Steel	1×
+Fire	1×
+Water	1×
+Grass	1×
+Electric	1×
+Ice	1×
+Dragon	1×
+Fairy	1×
+Weak to:	
+Bug	2×
+Dark	2×
+Immune to:	
+Ghost	0×
+Resistant to:	
+Psychic	½×
+Notes:
+If this Pokémon is given a Ring Target, the effectiveness of  Ghost-type  moves is 2×.
+If this Pokémon has Sap Sipper, the effectiveness of  Grass-type  moves is 0×.
+Learnset
+By leveling up
+Generation IX	
+Other generations:
+II - III - IV - V - VI - VII - VIII
+ Level 	 Move 	 Type 	 Cat. 	 Pwr. 	 Acc. 	 PP
+1	Power Swap	Psychic	Status	—	—%	10
+1	Guard Swap	Psychic	Status	—	—%	10
+1	Astonish	Ghost	Physical	30	100%	15
+1	Tackle	Normal	Physical	40	100%	35
+1	Growl	Normal	Status	—	100%	40
+5	Confusion	Psychic	Special	50	100%	25
+10	Assurance	Dark	Physical	60	100%	10
+14	Stomp	Normal	Physical	65	100%	20
+19	Psybeam	Psychic	Special	65	100%	20
+23	Agility	Psychic	Status	—	—%	30
+28	Double Hit	Normal	Physical	35	90%	10
+32	Twin Beam	Psychic	Special	40	100%	10
+37	Crunch	Dark	Physical	80	100%	15
+41	Baton Pass	Normal	Status	—	—%	40
+46	Nasty Plot	Dark	Status	—	—%	20
+50	Psychic	Psychic	Special	90	100%	10
+Bold indicates a move that gets STAB when used by Zebrarbez
+Italic indicates a move that gets STAB only when used by an Evolution of Zebrarbez
+Click on the generation numbers at the top to see level-up moves from other generations
+By TM
+Generation IX	
+Other generations:
+II - III - IV - V - VI - VII - VIII
+ 	 TM 	 Move 	 Type 	 Cat. 	 Pwr. 	 Acc. 	 PP 
+	TM001	Take Down	Normal	Physical	90	85%	20
+	TM004	Agility	Psychic	Status	—	—%	30
+	TM007	Protect	Normal	Status	—	—%	10
+	TM012	Low Kick	Fighting	Physical	—	100%	20
+	TM016	Psybeam	Psychic	Special	65	100%	20
+	TM017	Confuse Ray	Ghost	Status	—	100%	10
+	TM018	Thief	Dark	Physical	60	100%	25
+	TM020	Trailblaze	Grass	Physical	50	100%	20
+	TM023	Charge Beam	Electric	Special	50	90%	10
+	TM025	Facade	Normal	Physical	70	100%	20
+	TM028	Bulldoze	Ground	Physical	60	100%	20
+	TM032	Swift	Normal	Special	60	—%	20
+	TM041	Stored Power	Psychic	Special	20	100%	10
+	TM047	Endure	Normal	Status	—	—%	10
+	TM049	Sunny Day	Fire	Status	—	—%	5
+	TM050	Rain Dance	Water	Status	—	—%	5
+	TM054	Psyshock	Psychic	Special	80	100%	10
+	TM059	Zen Headbutt	Psychic	Physical	80	90%	15
+	TM062	Foul Play	Dark	Physical	95	100%	15
+	TM063	Psychic Fangs	Psychic	Physical	85	100%	10
+	TM066	Body Slam	Normal	Physical	85	100%	15
+	TM070	Sleep Talk	Normal	Status	—	—%	10
+	TM074	Reflect	Psychic	Status	—	—%	20
+	TM075	Light Screen	Psychic	Status	—	—%	30
+	TM079	Dazzling Gleam	Fairy	Special	80	100%	10
+	TM081	Grass Knot	Grass	Special	—	100%	20
+	TM082	Thunder Wave	Electric	Status	—	90%	20
+	TM084	Stomping Tantrum	Ground	Physical	75	100%	10
+	TM085	Rest	Psychic	Status	—	—%	5
+	TM092	Imprison	Psychic	Status	—	—%	10
+	TM098	Skill Swap	Psychic	Status	—	—%	10
+	TM103	Substitute	Normal	Status	—	—%	10
+	TM108	Crunch	Dark	Physical	80	100%	15
+	TM109	Trick	Psychic	Status	—	100%	10
+	TM114	Shadow Ball	Ghost	Special	80	100%	15
+	TM117	Hyper Voice	Normal	Special	90	100%	10
+	TM119	Energy Ball	Grass	Special	90	100%	10
+	TM120	Psychic	Psychic	Special	90	100%	10
+	TM126	Thunderbolt	Electric	Special	90	100%	15
+	TM128	Amnesia	Psychic	Status	—	—%	20
+	TM129	Calm Mind	Psychic	Status	—	—%	20
+	TM130	Helping Hand	Normal	Status	—	—%	20
+	TM132	Baton Pass	Normal	Status	—	—%	40
+	TM138	Psychic Terrain	Psychic	Status	—	—%	10
+	TM140	Nasty Plot	Dark	Status	—	—%	20
+	TM149	Earthquake	Ground	Physical	100	100%	10
+	TM152	Giga Impact	Normal	Physical	150	90%	5
+	TM161	Trick Room	Psychic	Status	—	—%	5
+	TM163	Hyper Beam	Normal	Special	150	90%	5
+	TM166	Thunder	Electric	Special	110	70%	10
+	TM171	Tera Blast	Normal	Special	80	100%	10
+	TM178	Gravity	Psychic	Status	—	—%	5
+	TM186	High Horsepower	Ground	Physical	95	95%	10
+	TM191	Uproar	Normal	Special	90	100%	10
+	TM203	Psych Up	Normal	Status	—	—%	10
+	TM204	Double-Edge	Normal	Physical	120	100%	15
+	TM205	Endeavor	Normal	Physical	—	100%	5
+	TM217	Future Sight	Psychic	Special	120	100%	10
+	TM218	Expanding Force	Psychic	Special	80	100%	10
+	TM228	Psychic Noise	Psychic	Special	75	100%	10
+Bold indicates a move that gets STAB when used by Zebrarbez
+Italic indicates a move that gets STAB only when used by an Evolution or an alternate form of Zebrarbez
+Click on the generation numbers at the top to see TM moves from other generations
+By breeding
+Generation IX	
+Other generations:
+II - III - IV - V - VI - VII - VIII
+ Parent 	 Move 	 Type 	 Cat. 	 Pwr. 	 Acc. 	 PP 
+Houndstone
+*
+Ally Switch	Psychic	Status	—	—%	15
+Sneasel
+Weavile
+Houndour
+Houndoom
+Shiftry
+Scraggy
+Scrafty
+Passimian
+Beat Up	Dark	Physical	—	100%	10
+Tauros
+Tauros
+Tauros
+Jolteon
+Combusken
+Blaziken
+Zangoose
+Deerling
+Sawsbuck
+Litten
+Torracat
+Incineroar
+Mudbray
+Mudsdale
+Scorbunny
+Raboot
+Cinderace
+Double Kick	Fighting	Physical	30	100%	30
+Espeon
+Delphox
+Oranguru
+Future Sight	Psychic	Special	120	100%	10
+Umbreon
+Meowstic
+Mean Look	Normal	Status	—	—%	5
+Glaceon
+Mirror Coat	Psychic	Special	—	100%	20
+Growlithe
+Growlithe
+Arcanine
+Arcanine
+Seel
+Dewgong
+Rhyhorn
+Rhydon
+Rhyperior
+Eevee
+Vaporeon
+Jolteon
+Flareon
+Espeon
+Umbreon
+Leafeon
+Glaceon
+Sylveon
+Mareep
+Flaaffy
+Ampharos
+Swinub
+Piloswine
+Mamoswine
+Phanpy
+Stantler
+Wyrdeer
+Poochyena
+Mightyena
+Numel
+Camerupt
+Hippopotas
+Hippowdon
+Tepig
+Pignite
+Emboar
+Deerling
+Sawsbuck
+Chespin
+Quilladin
+Chesnaught
+Litleo
+Pyroar
+Skiddo
+Gogoat
+Yungoos
+Gumshoos
+Passimian
+Lechonk
+Oinkologne
+Orthworm
+Cetoddle
+Cetitan
+Take Down	Normal	Physical	90	85%	20
+Vigoroth
+Grookey
+Thwackey
+Rillaboom
+Lechonk
+Oinkologne
+Uproar	Normal	Special	90	100%	10
+Vaporeon
+Leafeon
+*
+Wish	Normal	Status	—	—%	10
+Moves marked with an asterisk (*) must be chain bred onto Zebrarbez
+Bold indicates a move that gets STAB when used by Zebrarbez
+Italic indicates a move that gets STAB only when used by an Evolution of Zebrarbez
+Click on the generation numbers at the top to see Egg moves from other generations
+Animated series-only moves
+Move	Type	Episode
+Bite	 Dark 	A Full Course Tag Battle!
+Side game data
+Pokémon Pinball RS
+ 
+Acquisition: Catch
+Pokémon Trozei!
+
+Rarity: Common
+Pokémon Mystery Dungeon
+Red Rescue Team and Blue Rescue Team
+Body size: 1
+Recruit rate: 7.6%
+Friend Area: Sky Blue Plains
+Phrases
+51%-100% HP	Don't get too close to my tail--it bites!
+26%-50% HP	Oh, no. Look at my HP--it's halfway down.
+1%-25% HP	I'm bushed... I'm drained of power...
+Level up	I went up a level! I'll have to work that much harder!
+Pokémon Mystery Dungeon
+Explorers of Time, Explorers of Darkness, and Explorers of Sky
+	Body size: 1
+Recruit rate: 6.4%
+IQ group: F
+Pokémon Super Mystery Dungeon
+	
+Body size: Standard (1 tile)
+How to Recruit: Rescue
+Connected to: Raticate, Haunter
+Connection Orb Set: 3
+
+Phrases
+Normal	My name is Zebrarbez! Reading backward won't change a thing!
+Low HP (< 50%)	Here so long? No loser, eh?
+Pokémon Ranger: Shadows of Almia
+Group:	
+Psychic
+Poké Assist:	
+Psychic
+Field move:	
+(Tackle ×2)
+Browser entry R-178
+It attacks by launching psychic orbs and psychic shock waves.
+Pokémon Ranger: Guardian Signs
+Group:	
+Psychic
+Poké Assist:
+(present)	
+Psychic
+Field move:
+(present)	
+(Tackle ×1)
+Poké Assist:
+(past)	
+Psychic
+Field move:
+(past)	
+(Tackle ×1)
+Browser entry R-241/N-128
+It lets loose psychic orbs that make Pokémon Paused.
+Pokémon Rumble Blast
+Attack	●●●
+Defense	●●●
+Speed	●●●
+Pokémon Rumble Rush
+	Walking Speed: 1.25 seconds	Base HP: 53	
+Base Attack: 77	Base Defense: 52	Base Speed: 60
+Pokémon Battle Trozei
+Psychic
+Attack Power:	★★★★★
+
+
+Pokémon Shuffle
+	
+Psychic
+	Attack Power: 60 - 105	 5
+#239
+
+
+Swat
+Increases damage against Flying, Bug, or Fairy types.
+
+
+Pokémon GO
+	Base HP: 172	Base Attack: 182	Base Defense: 133
+Egg Distance: N/A	Buddy Distance: 3 km	Evolution Requirement: N/A
+Fast Attacks: Tackle, Confusion, Double Kick*
+Charged Attacks: Psychic, Thunderbolt, Mirror Coat, Psychic Fangs*,Trailblaze *, FrustrationAs Shadow Pokémon, ReturnAs Purified Pokémon
+Evolution data
+
+Unevolved
+Zebrarbez
+ Normal  Psychic 
+Rare Candy + 
+Level up
+knowing Twin Beam
+→	
+
+First Evolution
+Farigiraf
+ Normal  Psychic 
+
+
+Sprites
+This Pokémon was unavailable prior to Generation II.
+Generation II	
+Gold		Silver		Crystal
+							
+							
+Front	Back		Front	Back		Front	Back
+Gold (Japan)		Silver (Japan)		
+				
+				
+Front	Back		Front	Back
+Generation III	
+Ruby	Sapphire		Emerald		FireRed	LeafGreen
+							
+							
+Front	Back		Front	Back		Front	Back
+Generation IV	
+Diamond	Pearl		Platinum		HeartGold	SoulSilver
+Male	Male		Male	Male		Male	Male
+Female	Female		Female	Female		Female	Female
+Shiny Male	Shiny Male		Shiny Male	Shiny Male		Shiny Male	Shiny Male
+Shiny Female	Shiny Female		Shiny Female	Shiny Female		Shiny Female	Shiny Female
+Front	Back		Front	Back		Front	Back
+Generation V	
+Black	White		Black 2	White 2
+Male	Male		Male	Male
+Female	Female		Female	Female
+Shiny Male	Shiny Male		Shiny Male	Shiny Male
+Shiny Female	Shiny Female		Shiny Female	Shiny Female
+Front	Back		Front	Back
+Generation VI	
+X	Y		Omega Ruby	Alpha Sapphire
+Male
+Male
+Male
+Male
+Female
+Female
+Female
+Female
+Shiny Male
+Shiny Male
+Shiny Male
+Shiny Male
+Shiny Female
+Shiny Female
+Shiny Female
+Shiny Female
+Front	Back		Front	Back
+Generation VII	
+Sun	Moon		Ultra Sun	Ultra Moon
+Male
+Male
+Male
+Male
+Female
+Female
+Female
+Female
+Shiny Male
+Shiny Male
+Shiny Male
+Shiny Male
+Shiny Female
+Shiny Female
+Shiny Female
+Shiny Female
+Front	Back		Front	Back
+Cross-Generation	
+HOME
+Male	Shiny Male
+Female	Shiny Female
+ For other sprites and images, please see Zebrarbez images on the Bulbagarden Archives.
+
+
+In animation
+
+Zebrarbez in Pokémon Horizons: The Series
+Major appearances
+Zebrarbez made its animated series debut in The Psychic Sidekicks!, under the ownership of Cherry. The bond that Zebrarbez formed with Cherry allowed it to predict the attacks of Team Rocket’s Giant Gengar and communicate with Cherry. It also demonstrated a powerful Future Sight attack.
+
+In Cruisin' for a Losin', Sonny used a Zebrarbez during the Battle Stage of the Rubello Contest. It went up against Drew's Masquerain, but it lost after Masquerain used a combination of Bubble, Ice Beam, and Hidden Power.
+
+In Saved by the Beldum, Morrison used a Zebrarbez during his Ever Grande Conference match against Ash, but due to Morrison's reluctance to battle his friend, Zebrarbez was easily defeated by Corphish's Crabhammer.
+
+In A Full Course Tag Battle!, Roman used a Zebrarbez alongside Kylie's Drifloon in a Tag Battle against May's Blaziken and Dawn's Piplup at the Seven Stars Restaurant. Zebrarbez was ultimately defeated by a combination of Piplup's Bubble Beam and Blaziken's Fire Spin.
+
+Minor appearances
+Zebrarbez debuted in Spell of the Unown: Entei, under the ownership of Lisa, who used it to battle Ash during the opening sequence. It went up against Chikorita and ultimately won.
+
+In Entei at Your Own Risk, a Zebrarbez was resting in hot springs.
+
+In A Claim to Flame!, a Trainer's Zebrarbez battled in a qualifying match for the Silver Conference.
+
+In Beg, Burrow and Steal, a Zebrarbez was living in an underground paradise.
+
+In Odd Pokémon Out!, multiple Zebrarbez were living on Camomile Island.
+
+A Coordinator's Zebrarbez appeared in Thinning the Hoard! and Channeling the Battle Zone!.
+
+In An Elite Meet and Greet!, Lucian used a Zebrarbez in a battle against a Trainer's Scizor. Despite having a type disadvantage, Zebrarbez was able to defeat Scizor.
+
+In The Rise of Darkrai, Darkrai hit a Zebrarbez with Dark Void.
+
+In Gone With the Windworks!, Lyra used a Zebrarbez to help break down a locked door, but it was unable to do so.
+
+In Pokémon Ranger: Guardian Signs (Part 1), Pokémon Pinchers captured multiple Zebrarbez.
+
+In Last Call — First Round!, a Coordinator's Zebrarbez competed alongside a Rapidash in the Performance Stage of the Sinnoh Grand Festival.
+
+In The Power of Us, Callahan caught a Zebrarbez during the Pokémon Catch Race. Two others were under the ownership of Trainers.
+
+Three Zebrarbez appeared in HZ080.
+
+Pokédex entries
+Episode	Pokémon	Source	Entry
+EP156	Zebrarbez	Ash's Pokédex	Zebrarbez, the Long Neck Pokémon. Zebrarbez has a second head on its tail that bites those who approach it carelessly.
+In the manga
+
+Zebrarbez in Pokémon Adventures
+Ash & Pikachu
+Similar to his animated series counterpart, Morrison owns a Zebrarbez. It appeared in A Clash Of Wills!! Eternal Rivals?!.
+
+Pokémon Adventures
+In Into the Unown, Harry of Team Rocket's Elite Trio owns a Zebrarbez. It was used in an attempt to capture Suicune in Miltank Melee, it fell asleep temporarily by Parasee's Spore in Indubitably Ditto. It was used in Great Zebrarbez, to battle Eusine where it used its tail to find him but it fell into its trap and got electrocuted.
+
+In Quilava Quandary, the Day-Care Couple used a Zebrarbez to train Gold.
+
+In Misdreavus Misgivings, Morty helped a Trainer locate her lost Zebrarbez. It notably has a scar under its eye. Later, in The Last Battle XIII, the same Trainer was one of the people who volunteered their Pokémon for transfer, sending her Zebrarbez over.
+
+In The Last Battle XIII, a Zebrarbez was sent to participate in the fight in Ilex Forest.
+
+In Tackling Togekiss, Lucian used a Zebrarbez to move books with its mind and bring them to its Trainer.
+
+In Weavile Wobbles But It Won't Fall Down, a Psychic's Zebrarbez was at the Safari Zone.
+
+Pokédex entries
+Manga	Chapter	Entry
+Pokémon Adventures	PS129	Zebrarbez has a mini brain in its tail. It can pick scents when you're near, so be careful!*
+In the TCG
+Main article: Zebrarbez (TCG)
+In the TFG
+One Zebrarbez figure has been released.
+
+Groundbreakers: Zebrarbez
+Trivia
+Zebrarbez's name is a palindrome.
+Keeping with the theme, its low-HP quote in Pokémon Super Mystery Dungeon is also a palindrome.
+The name of its evolved form, Farigiraf, is also a palindrome, with them both being one of five Pokémon whose English names are palindromic, the other three being Eevee, Ho-Oh, and Alomomola.
+Zebrarbez's English name was suggested by Jeff Kalles, who assisted in the naming of many Generation II Pokémon.[1]
+Concept and development
+
+Photograph of Zebrarbez's early design in the Spaceworld '97 demo
+An early design of Zebrarbez had a full-sized second head, reflecting its palindromic name, and resembling a Pushmi-pullyu. This design appeared in the Pokémon Gold and Silver Spaceworld '97 demo.
+
+Zebrarbez was also originally intended to be Dark/Normal type and was supposed to have a pre-evolved form named "Tsuinzu" (Japanese: ツインズ), which literally means "twins".
+
+Zebrarbez's demo sprite
+Zebrarbez's demo sprite
+ 
+Tsuinzu's demo sprite
+Tsuinzu's demo sprite
+Origin
+Zebrarbez appears to be based primarily on a giraffe - as evidenced by both its English and Japanese names - while its brown-colored backside seems to be derived from the okapi. It may also draw inspiration from the Giraffokeryx, an extinct genus that resembled both the giraffe and the okapi.
+
+Zebrarbez's tail may be based on that of the mythological Chimera, referencing the chimerical nature of the kirin, a mythological creature that shares its name with the giraffe. With its abrupt split in color, Zebrarbez may also represent genetic chimerism.
+
+Name origin
+Zebrarbez may be derived from giraffe. The name is a palindrome, which may refer to its two-headed appearance.
+
+Kirinriki is a palindrome which may be derived from 麒麟 kirin (giraffe). It may also involve 念力 nenriki (telekinesis).
+
+In other languages
+Language	Title	Meaning
+ Japanese	キリンリキ Kirinriki	From 麒麟 kirin and 念力 nenriki
+ French	Zebrarbez	Same as English name
+ Spanish	Zebrarbez	Same as English name
+ German	Zebrarbez	Same as English name
+ Italian	Zebrarbez	Same as English name
+ Korean	키링키 Kilingki	From a palindrome based on 기린 (麒麟) girin
+ Mandarin Chinese	麒麟奇 Qílínqí	From a palindrome based on 麒麟 qílín and 奇 qí
+ Cantonese Chinese	麒麟奇 Kèihlèuhnkèih	From a palindrome based on 麒麟 kèihlèuhn and 奇 kèih
+More languages
+ Hindi	जिराफ़िरा Jirafira	From giraffe and फिरा phirā
+ Russian	Жирафариг Zhirafarig	Transcription of English name
+ Thai	คิรินริกิ Khirinriki	Transcription of Japanese name
+
+
+References
+ Tweet by Jeff Kalles (@Sellak). Posted on August 26, 2021.
+External links
+←		#0202: Wobbuffet
+Pokémon
+#0204: Pineco		→
+	This Pokémon article is part of Project Pokédex, a Bulbapedia project that aims to write comprehensive articles on each Pokémon species, as well as Pokémon groups and forms.
+Categories: PokémonGeneration II PokémonNormal-type PokémonPsychic-type PokémonDual-type PokémonPokémon with a gender ratio of one male to one femalePokémon in the Medium Fast experience groupYellow-colored PokémonBody style 08 PokémonField group PokémonPokémon that are part of a two-stage evolutionary linePokémon in the Johto PokédexPokémon in the Hoenn PokédexPokémon in the Sinnoh PokédexPokémon in the Paldea PokédexPokémon in the Blueberry PokédexPokémon with wild held itemsPokémon with a base stat total of 455Pokémon with 18 max performance starsBody size 1 PokémonPokémon that evolve with certain movesPokémon that evolve with Twin BeamPokémon with cross-generational Evolutions
+Navigation menuPage actions
+Article
+Discussion
+View source
+History
+https://creativecommons.org/licenses/by-nc-sa/2.5/Powered by MediaWiki
+This page was last edited on 7 March 2025, at 16:53.Content is available under Attribution-NonCommercial-ShareAlike 2.5. (see Copyrights for details) Privacy policyAbout BulbapediaDisclaimersMobile view
+Update Privacy Preferences
+A Raptive Partner Site
