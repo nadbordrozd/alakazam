@@ -1,8 +1,8 @@
 legendary_check:
     question: "Is the Pokemon Legendary or Mythical?"
     options:
-        yes: legendary_verdict
-        no: intelligence_check
+        "yes": legendary_verdict
+        "no": intelligence_check
 
 legendary_verdict:
     verdict: "🔴 DO NOT EAT - Cosmic consequences, world-ending events, divine retribution"
@@ -10,8 +10,8 @@ legendary_verdict:
 intelligence_check:
     question: "Does the Pokemon demonstrate human-level or higher intelligence?"
     options:
-        yes: intelligence_verdict
-        no: composition_check
+        "yes": intelligence_verdict
+        "no": composition_check
 
 intelligence_verdict:
     verdict: "🔴 DO NOT EAT - Ethical concerns, potential conversation during meal"
@@ -82,7 +82,7 @@ dangerous_verdict:
 large_assessment:
     question: "Can this Pokemon feed 20+ people for a community feast?"
     options:
-        yes: community_feast_verdict
+        "yes": community_feast_verdict
         tough_gamey: slow_cook_verdict
         premium_cuts: gourmet_verdict
 

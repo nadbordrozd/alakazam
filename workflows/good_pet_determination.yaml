@@ -1,8 +1,8 @@
 legendary_check:
     question: "Is the Pokemon Legendary or Mythical?"
     options:
-        yes: legendary_verdict
-        no: safety_assessment
+        "yes": legendary_verdict
+        "no": safety_assessment
     sidebars:
         - legendary_pokemon.md
 
@@ -26,14 +26,14 @@ danger_verdict:
 danger_level_check:
     question: "Can the danger be managed with proper training and precautions?"
     options:
-        yes: experienced_owner_check
-        no: danger_verdict
+        "yes": experienced_owner_check
+        "no": danger_verdict
 
 experienced_owner_check:
     question: "Are you an experienced Pokemon trainer?"
     options:
-        yes: size_check
-        no: beginner_danger_verdict
+        "yes": size_check
+        "no": beginner_danger_verdict
 
 beginner_danger_verdict:
     verdict: "🔴 NOT FOR BEGINNERS - Start with something that won't accidentally vaporize you"
@@ -55,8 +55,8 @@ massive_verdict:
 tiny_assessment:
     question: "Is the tiny Pokemon easy to lose or accidentally harm?"
     options:
-        yes: tiny_fragile_verdict
-        no: intelligence_check
+        "yes": tiny_fragile_verdict
+        "no": intelligence_check
 
 tiny_fragile_verdict:
     verdict: "🟡 PROCEED WITH CAUTION - High maintenance, easy to misplace"
@@ -74,8 +74,8 @@ small_destructive_verdict:
 medium_assessment:
     question: "Do you have adequate space for a medium-sized Pokemon?"
     options:
-        yes: intelligence_check
-        no: space_verdict
+        "yes": intelligence_check
+        "no": space_verdict
 
 space_verdict:
     verdict: "🔴 INSUFFICIENT SPACE - Pokemon needs room to roam"
@@ -83,14 +83,14 @@ space_verdict:
 large_assessment:
     question: "Do you have a large yard and outdoor space?"
     options:
-        yes: large_space_check
-        no: space_verdict
+        "yes": large_space_check
+        "no": space_verdict
 
 large_space_check:
     question: "Are you prepared for the exercise and space requirements?"
     options:
-        yes: intelligence_check
-        no: commitment_verdict
+        "yes": intelligence_check
+        "no": commitment_verdict
 
 commitment_verdict:
     verdict: "🔴 INSUFFICIENT COMMITMENT - This is a lifestyle change"
@@ -107,8 +107,8 @@ intelligence_check:
 smart_pokemon_check:
     question: "Can you handle a Pokemon that might outsmart you?"
     options:
-        yes: temperament_check
-        no: too_smart_verdict
+        "yes": temperament_check
+        "no": too_smart_verdict
 
 too_smart_verdict:
     verdict: "🟠 CHALLENGING - May rearrange your furniture while you sleep"
@@ -116,8 +116,8 @@ too_smart_verdict:
 simple_pokemon_check:
     question: "Are you okay with basic interaction and simple commands?"
     options:
-        yes: temperament_check
-        no: intelligence_mismatch_verdict
+        "yes": temperament_check
+        "no": intelligence_mismatch_verdict
 
 intelligence_mismatch_verdict:
     verdict: "🟡 MISMATCHED EXPECTATIONS - Adjust your expectations"
@@ -134,8 +134,8 @@ temperament_check:
 aggressive_check:
     question: "Can aggression be managed through training and socialization?"
     options:
-        yes: experienced_trainer_check
-        no: temperament_verdict
+        "yes": experienced_trainer_check
+        "no": temperament_verdict
 
 temperament_verdict:
     verdict: "🔴 UNSUITABLE TEMPERAMENT - Some personalities don't mesh with home life"
@@ -143,8 +143,8 @@ temperament_verdict:
 experienced_trainer_check:
     question: "Do you have experience with difficult Pokemon personalities?"
     options:
-        yes: care_requirements_check
-        no: beginner_temperament_verdict
+        "yes": care_requirements_check
+        "no": beginner_temperament_verdict
 
 beginner_temperament_verdict:
     verdict: "🔴 NOT FOR BEGINNERS - Start with a friendlier Pokemon"
@@ -152,8 +152,8 @@ beginner_temperament_verdict:
 independent_check:
     question: "Are you okay with a Pokemon that may not show much affection?"
     options:
-        yes: care_requirements_check
-        no: affection_mismatch_verdict
+        "yes": care_requirements_check
+        "no": affection_mismatch_verdict
 
 affection_mismatch_verdict:
     verdict: "🟡 PERSONALITY MISMATCH - Consider your emotional needs"
@@ -161,8 +161,8 @@ affection_mismatch_verdict:
 energy_level_check:
     question: "Can you provide adequate exercise and mental stimulation?"
     options:
-        yes: care_requirements_check
-        no: energy_mismatch_verdict
+        "yes": care_requirements_check
+        "no": energy_mismatch_verdict
 
 energy_mismatch_verdict:
     verdict: "🔴 ENERGY MISMATCH - Destructive behavior from boredom guaranteed"
@@ -178,8 +178,8 @@ care_requirements_check:
 care_commitment_check:
     question: "Are you prepared for above-average care commitment?"
     options:
-        yes: special_abilities_check
-        no: care_verdict
+        "yes": special_abilities_check
+        "no": care_verdict
 
 care_verdict:
     verdict: "🔴 INADEQUATE PREPARATION - Pokemon welfare comes first"
@@ -187,14 +187,14 @@ care_verdict:
 intensive_care_check:
     question: "Do you have the time, money, and expertise for intensive care?"
     options:
-        yes: special_abilities_check
-        no: care_verdict
+        "yes": special_abilities_check
+        "no": care_verdict
 
 exotic_care_check:
     question: "Can you provide specialized environments (aquatic, volcanic, etc.)?"
     options:
-        yes: special_abilities_check
-        no: environment_verdict
+        "yes": special_abilities_check
+        "no": environment_verdict
 
 environment_verdict:
     verdict: "🔴 CANNOT PROVIDE PROPER ENVIRONMENT - Pokemon health requires specific conditions"
@@ -215,8 +215,8 @@ reality_verdict:
 minor_ability_check:
     question: "Can you manage minor abilities (sparks, small flames, etc.)?"
     options:
-        yes: lifestyle_check
-        no: ability_management_verdict
+        "yes": lifestyle_check
+        "no": ability_management_verdict
 
 ability_management_verdict:
     verdict: "🟡 ABILITY MANAGEMENT REQUIRED - Pokemon-proof your home first"
@@ -224,8 +224,8 @@ ability_management_verdict:
 major_ability_check:
     question: "Are you experienced with managing powerful Pokemon abilities?"
     options:
-        yes: lifestyle_check
-        no: major_ability_verdict
+        "yes": lifestyle_check
+        "no": major_ability_verdict
 
 major_ability_verdict:
     verdict: "🔴 ABILITIES TOO POWERFUL - Leave this to the professionals"
