@@ -3,6 +3,8 @@ legendary_check:
     options:
         "yes": legendary_verdict
         "no": intelligence_check
+    sidebars:
+        - legendary_pokemon.md
 
 legendary_verdict:
     verdict: "🔴 DO NOT EAT - Cosmic consequences, world-ending events, divine retribution"
@@ -12,6 +14,8 @@ intelligence_check:
     options:
         "yes": intelligence_verdict
         "no": composition_check
+    sidebars:
+        - pokemon_intelligence.md
 
 intelligence_verdict:
     verdict: "🔴 DO NOT EAT - Ethical concerns, potential conversation during meal"
@@ -53,6 +57,8 @@ size_check:
         normal: danger_assessment
         large: large_assessment
         massive: massive_verdict
+    sidebars:
+        - size_categories.md
 
 massive_verdict:
     verdict: "🟠 IMPRACTICAL - Requires industrial cooking equipment"
@@ -75,6 +81,8 @@ danger_assessment:
         docile_weak: flavor_assessment
         aggressive_manageable: risk_reward_assessment
         extremely_dangerous: dangerous_verdict
+    sidebars:
+        - predatory_pokemon.md
 
 dangerous_verdict:
     verdict: "🔴 TOO RISKY - Chef safety priority"
