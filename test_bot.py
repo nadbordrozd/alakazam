@@ -21,25 +21,29 @@ class TestBot(unittest.TestCase):
         self.assertEqual(user_response.role, "user")
         self.assertEqual(bot_response.role, "bot")
         self.assertEqual(user_response.text, "hello")
-        self.assertEqual(bot_response.text, "No active workflow. Please start a workflow first.")
+        self.assertEqual(bot_response.text, "Sorry I don't understand")
     
     def test_process_user_input_valid_option(self):
         """Test process_user_input with valid option"""
         # Start workflow first
         self.bot.start_workflow("test")
         
-        # Test valid input
-        responses = self.bot.process_user_input("red")
-        user_response = next(responses)
-        bot_response = next(responses)
+        # Test valid input - now returns multiple messages
+        responses = list(self.bot.process_user_input("red"))
+        user_response = responses[0]
+        acknowledgment_response = responses[1] 
+        workflow_response = responses[2]
         
         self.assertIsInstance(user_response, Message)
-        self.assertIsInstance(bot_response, Message)
+        self.assertIsInstance(acknowledgment_response, Message)
+        self.assertIsInstance(workflow_response, Message)
         self.assertEqual(user_response.role, "user")
-        self.assertEqual(bot_response.role, "bot")
+        self.assertEqual(acknowledgment_response.role, "bot")
+        self.assertEqual(workflow_response.role, "bot")
         
         self.assertEqual(user_response.text, "red")
-        self.assertEqual(bot_response.text, "Red is a warm color!")
+        self.assertEqual(acknowledgment_response.text, "Got it, I understand you mean 'red'.")
+        self.assertEqual(workflow_response.text, "Red is a warm color!")
         
         # Check workflow state
         self.assertEqual(self.bot.active_node.name, "red_response")
@@ -49,11 +53,13 @@ class TestBot(unittest.TestCase):
         """Test that process_user_input is case insensitive"""
         self.bot.start_workflow("test")
         
-        responses = self.bot.process_user_input("RED")  # uppercase
-        user_response = next(responses)
-        bot_response = next(responses)
+        responses = list(self.bot.process_user_input("RED"))  # uppercase
+        user_response = responses[0]
+        acknowledgment_response = responses[1]
+        workflow_response = responses[2]
         
-        self.assertEqual(bot_response.text, "Red is a warm color!")
+        self.assertEqual(acknowledgment_response.text, "Got it, I understand you mean 'red'.")
+        self.assertEqual(workflow_response.text, "Red is a warm color!")
         self.assertEqual(self.bot.active_node.name, "red_response")
     
     def test_process_user_input_invalid_option(self):
@@ -95,18 +101,16 @@ class TestBot(unittest.TestCase):
         """Test successful go_back operation"""
         self.bot.start_workflow("test")
         
-        # Process user input (creates user + bot messages)
-        responses = self.bot.process_user_input("red")
-        user_response = next(responses)
-        bot_response = next(responses)
+        # Process user input (creates user + multiple bot messages)
+        responses = list(self.bot.process_user_input("red"))
         
         # Check state before go_back
         self.assertEqual(self.bot.active_node.name, "red_response")
         
         result = self.bot.go_back()
         
-        # Should return list of 2 message IDs
-        self.assertEqual(len(result), 2)
+        # Should return list of 3 message IDs (1 user + 2 bot messages)
+        self.assertEqual(len(result), 3)
         self.assertIsInstance(result, list)
         self.assertTrue(all(isinstance(msg_id, int) for msg_id in result))
         
@@ -118,13 +122,11 @@ class TestBot(unittest.TestCase):
         self.bot.start_workflow("test")
         
         # Process user input
-        responses = self.bot.process_user_input("red")
-        user_response = next(responses)
-        bot_response = next(responses)
+        responses = list(self.bot.process_user_input("red"))
         
         # First go_back should succeed
         result1 = self.bot.go_back()
-        self.assertEqual(len(result1), 2)
+        self.assertEqual(len(result1), 3)  # 1 user + 2 bot messages
         
         # Second go_back should return empty (only bot message left)
         result2 = self.bot.go_back()
@@ -162,9 +164,7 @@ class TestBot(unittest.TestCase):
         self.bot.start_workflow("test")
         
         # Add user input
-        responses = self.bot.process_user_input("red")
-        user_msg = next(responses)
-        bot_msg = next(responses)
+        responses = list(self.bot.process_user_input("red"))
         
         # Get formatted history
         history = self.bot.get_conversation_history_for_llm()
@@ -174,6 +174,7 @@ class TestBot(unittest.TestCase):
         self.assertIn("Human:", history)
         self.assertIn("What's your favorite color?", history)
         self.assertIn("red", history)
+        self.assertIn("Got it, I understand you mean 'red'.", history)
         self.assertIn("Red is a warm color!", history)
         
         # Check that context is included
@@ -184,7 +185,8 @@ class TestBot(unittest.TestCase):
         lines = history.split('\n\n')
         self.assertTrue(lines[0].startswith("Assistant:"))  # First message is bot
         self.assertTrue(lines[1].startswith("Human:"))      # Second is user
-        self.assertTrue(lines[2].startswith("Assistant:"))  # Third is bot
+        self.assertTrue(lines[2].startswith("Assistant:"))  # Third is bot (acknowledgment)
+        self.assertTrue(lines[3].startswith("Assistant:"))  # Fourth is bot (workflow)
     
     def test_conversation_history_for_llm_with_context(self):
         """Test that LLM history includes workflow context when available"""
@@ -206,23 +208,27 @@ class TestBot(unittest.TestCase):
         self.assertEqual(list(self.bot.active_node.options.keys()), ["red", "blue"])
         
         # Choose blue
-        responses = self.bot.process_user_input("blue")
-        user_response = next(responses)
-        blue_response = next(responses)
+        responses = list(self.bot.process_user_input("blue"))
+        user_response = responses[0]
+        acknowledgment_response = responses[1]
+        blue_response = responses[2]
         self.assertEqual(self.bot.active_node.name, "blue_response")
+        self.assertEqual(acknowledgment_response.text, "Got it, I understand you mean 'blue'.")
         self.assertEqual(blue_response.text, "Blue is a cool color!")
         self.assertEqual(list(self.bot.active_node.options.keys()), [])
         
         # Go back
         deleted_ids = self.bot.go_back()
-        self.assertEqual(len(deleted_ids), 2)
+        self.assertEqual(len(deleted_ids), 3)  # 1 user + 2 bot messages
         self.assertEqual(self.bot.active_node.name, "start")
         
         # Choose red this time
-        responses = self.bot.process_user_input("red")
-        user_response = next(responses)
-        red_response = next(responses)
+        responses = list(self.bot.process_user_input("red"))
+        user_response = responses[0]
+        acknowledgment_response = responses[1]
+        red_response = responses[2]
         self.assertEqual(self.bot.active_node.name, "red_response")
+        self.assertEqual(acknowledgment_response.text, "Got it, I understand you mean 'red'.")
         self.assertEqual(red_response.text, "Red is a warm color!")
 
 

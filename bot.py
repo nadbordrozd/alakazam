@@ -76,9 +76,16 @@ class Bot:
     
     def can_go_back(self) -> bool:
         """Check if we can go back"""
-        return (len(self.messages) >= 2 and 
-                self.messages[-1].role == "bot" and 
-                self.messages[-2].role == "user")
+        if len(self.messages) < 2:
+            return False
+        
+        # Look for the most recent user message that has bot messages after it
+        for i in range(len(self.messages) - 1, -1, -1):
+            if self.messages[i].role == "user":
+                # Found a user message, check if there are bot messages after it
+                return i < len(self.messages) - 1
+        
+        return False
     
     # Bot public interface methods
     def get_greeting_message(self) -> Message:
@@ -149,9 +156,26 @@ class Bot:
         if not self.can_go_back():
             return []
         
-        # Pop the messages
-        bot_msg = self.messages.pop()
-        user_msg = self.messages.pop()
+        # Find the most recent user message
+        user_msg_index = -1
+        for i in range(len(self.messages) - 1, -1, -1):
+            if self.messages[i].role == "user":
+                user_msg_index = i
+                break
+        
+        if user_msg_index == -1:
+            return []  # No user message found (shouldn't happen if can_go_back is correct)
+        
+        # Get the user message for state restoration
+        user_msg = self.messages[user_msg_index]
+        
+        # Collect all messages to remove (user message and everything after it)
+        removed_message_ids = []
+        for i in range(user_msg_index, len(self.messages)):
+            removed_message_ids.append(self.messages[i].id)
+        
+        # Remove all messages from user_msg_index onwards
+        self.messages = self.messages[:user_msg_index]
         
         # Restore workflow state from the user message
         self.active_node = user_msg.node
@@ -160,7 +184,7 @@ class Bot:
         if user_msg.node and user_msg.node.workflow:
             self.workflow_positions[user_msg.node.workflow] = user_msg.node
         
-        return [user_msg.id, bot_msg.id]
+        return removed_message_ids
     
     def get_conversation_history_for_llm(self) -> str:
         """Format conversation history as a string for LLM consumption"""
