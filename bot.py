@@ -2,7 +2,6 @@ from typing import Dict, Optional, Any, List
 from datetime import datetime
 from dataclasses import dataclass
 from workflow import Workflow, WorkflowNode
-from llm_decision import process_user_input_with_llm
 
 # Unified message class for both user and bot messages
 @dataclass
@@ -29,7 +28,7 @@ class Bot:
         # Former ConversationState fields
         self.messages: List[Message] = []
         self.next_message_id = 1
-        self.workflow_positions: Dict[Workflow, WorkflowNode] = {}
+        self.workflow_positions: Dict[str, WorkflowNode] = {}
         self.active_node: Optional[WorkflowNode] = None
         
         # Bot functionality
@@ -64,12 +63,12 @@ class Bot:
     def set_active_node(self, node: WorkflowNode):
         """Set the active node (and update workflow position tracking)"""
         if node and node.workflow:
-            self.workflow_positions[node.workflow] = node
+            self.workflow_positions[node.workflow.name] = node
         self.active_node = node
     
     def switch_workflow(self, workflow: Workflow):
         """Switch to a different workflow"""
-        self.active_node = self.workflow_positions.get(workflow)
+        self.active_node = self.workflow_positions.get(workflow.name)
         # If no node is saved for this workflow, set to first node
         if not self.active_node and workflow:
             self.active_node = workflow.get_first_node()
@@ -124,32 +123,53 @@ class Bot:
         # Yield user message immediately (fast operation)
         yield user_msg
         
+        # Process bot response (may take time with LLM)
+        bot_messages = self.process_bot_response()
+        
+        # Yield each bot message
+        for bot_msg in bot_messages:
+            yield bot_msg
+    
+    def process_bot_response(self) -> List[Message]:
+        """Process bot response based on the last user message"""
+        # Import here to avoid circular imports
+        from llm_decision import process_user_input_with_llm
+        
         # Get context for LLM decision
-        conversation_history = self.get_conversation_history_for_llm()
         available_options = list(self.active_node.options.keys()) if self.active_node else []
         available_workflows = list(self.workflows.keys())
+        current_node_context = {
+            'node_name': self.active_node.name if self.active_node else None,
+            'available_options': available_options
+        }
         
         # Let LLM decide what to do
-        decision = process_user_input_with_llm(conversation_history, available_options, available_workflows)
+        decision = process_user_input_with_llm(self.messages, available_options, available_workflows, current_node_context)
+        
+        bot_messages = []
         
         # Process LLM decision
-        
         # First, if LLM provided text, always send it
-        if decision["text"]:
-            yield self.add_bot_message(decision["text"])
+        if decision.get("text"):
+            bot_msg = self.add_bot_message(decision["text"])
+            bot_messages.append(bot_msg)
         
         # Then, if there's a decision option, process it
-        if decision["decision_option"]:
+        if decision.get("decision_option"):
             if self.active_node and decision["decision_option"] in self.active_node.options:
                 next_node = self.active_node.next(decision["decision_option"])
                 self.set_active_node(next_node)
                 bot_text = self._get_bot_text(next_node)
-                yield self.add_bot_message(bot_text)
+                bot_msg = self.add_bot_message(bot_text)
+                bot_messages.append(bot_msg)
         
         # Then, if there's a workflow to start, process it
-        elif decision["workflow"]:
+        elif decision.get("workflow"):
             if decision["workflow"] in self.workflows:
-                yield self.start_workflow(decision["workflow"])
+                bot_msg = self.start_workflow(decision["workflow"])
+                bot_messages.append(bot_msg)
+        
+        return bot_messages
     
     def go_back(self) -> List[int]:
         """Go back one step in the conversation"""
@@ -182,43 +202,23 @@ class Bot:
         
         # Update workflow_positions based on the restored state
         if user_msg.node and user_msg.node.workflow:
-            self.workflow_positions[user_msg.node.workflow] = user_msg.node
+            self.workflow_positions[user_msg.node.workflow.name] = user_msg.node
         
         return removed_message_ids
     
-    def get_conversation_history_for_llm(self) -> str:
-        """Format conversation history as a string for LLM consumption"""
-        if not self.messages:
-            return "No conversation history yet."
-        
-        # Format each message with role prefix
-        formatted_messages = []
-        for message in self.messages:
-            role_prefix = "Human" if message.role == "user" else "Assistant"
-            formatted_messages.append(f"{role_prefix}: {message.text}")
-        
-        # Join with double newlines for clear separation
-        conversation = "\n\n".join(formatted_messages)
-        
-        # Add context about current workflow state if available
-        context_info = []
-        if self.active_node:
-            context_info.append(f"Current workflow node: {self.active_node.name}")
-            if self.active_node.options:
-                available_options = list(self.active_node.options.keys())
-                context_info.append(f"Available options: {available_options}")
-        
-        if context_info:
-            context = "\n\n[Context: " + " | ".join(context_info) + "]"
-            conversation += context
-        
-        return conversation
+
     
     def get_active_sidebars(self) -> List[str]:
         """Get the sidebar files for the currently active workflow node"""
         if self.active_node:
             return self.active_node.sidebars
         return []
+    
+    def get_current_workflow_name(self) -> Optional[str]:
+        """Get the name of the currently active workflow"""
+        if self.active_node and self.active_node.workflow:
+            return self.active_node.workflow.name
+        return None
     
     # Helper methods
     def _get_bot_text(self, node: WorkflowNode) -> str:
@@ -275,7 +275,7 @@ if __name__ == "__main__":
     deleted_ids = bot.go_back()
     print(f"Deleted message IDs: {deleted_ids}")
     
-    # Test conversation history for LLM
-    print("\n=== Conversation History for LLM ===")
-    llm_history = bot.get_conversation_history_for_llm()
-    print(llm_history) 
+    # Test message list
+    print("\n=== Message List ===")
+    for msg in bot.messages:
+        print(f"{msg.role}: {msg.text}") 
