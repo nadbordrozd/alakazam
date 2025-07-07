@@ -6,6 +6,8 @@ class ChatApp {
         this.chatMessages = document.getElementById('chatMessages');
         this.optionsContainer = document.getElementById('optionsContainer');
         this.sidebarContent = document.getElementById('sidebarContent');
+        this.workflowIndicator = document.getElementById('workflowIndicator');
+        this.workflowName = document.getElementById('workflowName');
         
         this.initializeEventListeners();
         this.loadMessages();
@@ -31,6 +33,7 @@ class ChatApp {
             this.updateOptions(data.current_options);
             this.loadSidebars(data.active_sidebars);
             this.updateGoBackButton(data.can_go_back);
+            this.updateWorkflowIndicator(data.current_workflow);
         } catch (error) {
             this.showError('Failed to load messages');
         }
@@ -40,31 +43,74 @@ class ChatApp {
         const messageText = text || this.messageInput.value.trim();
         if (!messageText) return;
         
+        // Disable send button and show loading state
+        this.setSendButtonState(false);
+        this.messageInput.disabled = true;
+        
         try {
-            const response = await fetch('/api/send_message', {
+            // Step 1: Send user message immediately
+            const userResponse = await fetch('/api/send_message', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: messageText })
             });
             
-            const data = await response.json();
+            const userData = await userResponse.json();
             
-            if (data.error) {
-                this.showError(data.error);
+            if (userData.error) {
+                this.showError(userData.error);
+                this.setSendButtonState(true);
+                this.messageInput.disabled = false;
                 return;
             }
             
-            // Add new messages
-            this.displayMessages(data.new_messages, true);
-            this.updateOptions(data.current_options);
-            this.loadSidebars(data.active_sidebars);
-            this.updateGoBackButton(data.can_go_back);
+            // Display user message immediately
+            this.displayMessages([userData.user_message], true);
+            this.updateGoBackButton(userData.can_go_back);
             
             // Clear input
             this.messageInput.value = '';
             
+            // Step 2: Process bot response (this may take time with LLM)
+            const botResponse = await fetch('/api/process_bot_response', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            const botData = await botResponse.json();
+            
+            if (botData.error) {
+                this.showError(botData.error);
+                return;
+            }
+            
+            // Display bot messages as they arrive
+            if (botData.bot_messages && botData.bot_messages.length > 0) {
+                this.displayMessages(botData.bot_messages, true);
+            }
+            
+            this.updateOptions(botData.current_options);
+            this.loadSidebars(botData.active_sidebars);
+            this.updateGoBackButton(botData.can_go_back);
+            this.updateWorkflowIndicator(botData.current_workflow);
+            
         } catch (error) {
             this.showError('Failed to send message');
+        } finally {
+            // Re-enable send button and input
+            this.setSendButtonState(true);
+            this.messageInput.disabled = false;
+        }
+    }
+    
+    setSendButtonState(enabled) {
+        this.sendButton.disabled = !enabled;
+        if (enabled) {
+            this.sendButton.textContent = 'Send';
+            this.sendButton.style.opacity = '1';
+        } else {
+            this.sendButton.textContent = 'Sending...';
+            this.sendButton.style.opacity = '0.6';
         }
     }
     
@@ -88,6 +134,7 @@ class ChatApp {
             this.updateOptions(data.current_options);
             this.loadSidebars(data.active_sidebars);
             this.updateGoBackButton(data.can_go_back);
+            this.updateWorkflowIndicator(data.current_workflow);
             
         } catch (error) {
             this.showError('Failed to go back');
@@ -178,6 +225,21 @@ class ChatApp {
     
     scrollToBottom() {
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+    }
+    
+    updateWorkflowIndicator(workflowName) {
+        if (workflowName && workflowName !== 'none') {
+            // Format workflow name for display
+            const displayName = workflowName
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, l => l.toUpperCase());
+            
+            this.workflowName.textContent = displayName;
+            this.workflowIndicator.classList.remove('hidden');
+        } else {
+            this.workflowName.textContent = 'None Active';
+            this.workflowIndicator.classList.add('hidden');
+        }
     }
 }
 

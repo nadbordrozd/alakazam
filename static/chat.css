@@ -39,6 +39,37 @@ body {
     align-items: center;
 }
 
+.workflow-indicator {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-size: 14px;
+    min-width: 150px;
+}
+
+.workflow-indicator.hidden {
+    display: none;
+}
+
+.workflow-label {
+    color: rgba(255, 255, 255, 0.8);
+    margin-right: 6px;
+    font-weight: 500;
+}
+
+.workflow-name {
+    color: #ffffff;
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: capitalize;
+    font-size: 13px;
+}
+
 .chat-messages {
     flex: 1;
     padding: 20px;
