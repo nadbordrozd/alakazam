@@ -36,34 +36,65 @@ def get_messages():
         'messages': messages,
         'current_options': current_options,
         'active_sidebars': active_sidebars,
-        'can_go_back': bot.can_go_back()
+        'can_go_back': bot.can_go_back(),
+        'current_workflow': bot.get_current_workflow_name()
     })
 
 @app.route('/api/send_message', methods=['POST'])
 def send_message():
-    """Process user input and return new messages"""
+    """Add user message immediately and return it"""
     data = request.get_json()
     user_text = data.get('text', '').strip()
     
     if not user_text:
         return jsonify({'error': 'No message provided'}), 400
     
-    # Process user input with bot
-    messages = list(bot.process_user_input(user_text))
-    
-    # Convert to dict format
-    new_messages = [msg.to_dict() for msg in messages]
-    
-    # Get updated state
-    current_options = list(bot.active_node.options.keys()) if bot.active_node else []
-    active_sidebars = bot.get_active_sidebars()
+    # Add user message immediately (this is fast)
+    user_message = bot.add_user_message(user_text)
     
     return jsonify({
-        'new_messages': new_messages,
-        'current_options': current_options,
-        'active_sidebars': active_sidebars,
+        'user_message': user_message.to_dict(),
         'can_go_back': bot.can_go_back()
     })
+
+@app.route('/api/process_bot_response', methods=['POST'])
+def process_bot_response():
+    """Process bot response based on the last user message"""
+    try:
+        # Get the last user message
+        last_user_msg = None
+        for msg in reversed(bot.messages):
+            if msg.role == 'user':
+                last_user_msg = msg
+                break
+        
+        if not last_user_msg:
+            return jsonify({'error': 'No user message to process'}), 400
+        
+        # Let the Bot handle the response processing (may use LLM internally)
+        bot_messages = bot.process_bot_response()
+        
+        # Convert to dict format
+        new_bot_messages = [msg.to_dict() for msg in bot_messages]
+        
+        # Get updated state
+        current_options = list(bot.active_node.options.keys()) if bot.active_node else []
+        active_sidebars = bot.get_active_sidebars()
+        
+        return jsonify({
+            'bot_messages': new_bot_messages,
+            'current_options': current_options,
+            'active_sidebars': active_sidebars,
+            'can_go_back': bot.can_go_back(),
+            'current_workflow': bot.get_current_workflow_name()
+        })
+        
+    except Exception as e:
+        # Enhanced error logging for debugging
+        import traceback
+        error_trace = traceback.format_exc()
+        print(f"Error in process_bot_response: {error_trace}")
+        return jsonify({'error': f'Failed to process bot response: {str(e)}'}), 500
 
 @app.route('/api/go_back', methods=['POST'])
 def go_back():
@@ -78,7 +109,8 @@ def go_back():
         'removed_message_ids': removed_message_ids,
         'current_options': current_options,
         'active_sidebars': active_sidebars,
-        'can_go_back': bot.can_go_back()
+        'can_go_back': bot.can_go_back(),
+        'current_workflow': bot.get_current_workflow_name()
     })
 
 @app.route('/api/sidebar/<filename>')
