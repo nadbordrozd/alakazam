@@ -151,6 +151,51 @@ class TestBot(unittest.TestCase):
         self.assertEqual(greeting.id, 1)
         self.assertIsNotNone(greeting.timestamp)
     
+    def test_conversation_history_for_llm_empty(self):
+        """Test LLM history formatting with empty conversation"""
+        history = self.bot.get_conversation_history_for_llm()
+        self.assertEqual(history, "No conversation history yet.")
+    
+    def test_conversation_history_for_llm_with_messages(self):
+        """Test LLM history formatting with actual conversation"""
+        # Start workflow and add some messages
+        self.bot.start_workflow("test")
+        
+        # Add user input
+        responses = self.bot.process_user_input("red")
+        user_msg = next(responses)
+        bot_msg = next(responses)
+        
+        # Get formatted history
+        history = self.bot.get_conversation_history_for_llm()
+        
+        # Check format and content
+        self.assertIn("Assistant:", history)
+        self.assertIn("Human:", history)
+        self.assertIn("What's your favorite color?", history)
+        self.assertIn("red", history)
+        self.assertIn("Red is a warm color!", history)
+        
+        # Check that context is included
+        self.assertIn("[Context:", history)
+        self.assertIn("Current workflow node:", history)
+        
+        # Check message order (chronological)
+        lines = history.split('\n\n')
+        self.assertTrue(lines[0].startswith("Assistant:"))  # First message is bot
+        self.assertTrue(lines[1].startswith("Human:"))      # Second is user
+        self.assertTrue(lines[2].startswith("Assistant:"))  # Third is bot
+    
+    def test_conversation_history_for_llm_with_context(self):
+        """Test that LLM history includes workflow context when available"""
+        self.bot.start_workflow("test")
+        
+        history = self.bot.get_conversation_history_for_llm()
+        
+        # Should include current node context
+        self.assertIn("Current workflow node: start", history)
+        self.assertIn("Available options: ['red', 'blue']", history)
+    
     def test_workflow_progression(self):
         """Test complete workflow progression"""
         # Start workflow

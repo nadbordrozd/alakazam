@@ -1,0 +1,16 @@
+start:
+  question: "What's your favorite color?"
+  options:
+    red: red_response
+    blue: blue_response
+  sidebars: []
+
+red_response:
+  verdict: "Red is a warm color!"
+  options: {}
+  sidebars: []
+
+blue_response:
+  verdict: "Blue is a cool color!"
+  options: {}
+  sidebars: [] 
