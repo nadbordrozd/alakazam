@@ -214,6 +214,12 @@ class Bot:
         
         return conversation
     
+    def get_active_sidebars(self) -> List[str]:
+        """Get the sidebar files for the currently active workflow node"""
+        if self.active_node:
+            return self.active_node.sidebars
+        return []
+    
     # Helper methods
     def _get_bot_text(self, node: WorkflowNode) -> str:
         """Helper to get appropriate bot text from a node"""

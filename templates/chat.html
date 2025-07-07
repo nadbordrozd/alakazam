@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ibis Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .chat-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-right: 1px solid #ddd;
+        }
+
+        .sidebar-pane {
+            width: 350px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .chat-header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 200px);
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: #007bff;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .bot-message {
+            background-color: #e9ecef;
+            color: #333;
+            margin-right: auto;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            border-top: 1px solid #ddd;
+            background-color: #f8f9fa;
+        }
+
+        .options-container {
+            margin-bottom: 15px;
+        }
+
+        .option-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 4px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .option-button:hover {
+            background-color: #218838;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .message-input:focus {
+            border-color: #007bff;
+        }
+
+        .send-button, .go-back-button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .send-button {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .send-button:hover {
+            background-color: #0056b3;
+        }
+
+        .go-back-button {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .go-back-button:hover {
+            background-color: #545b62;
+        }
+
+        .go-back-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .sidebar-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-title {
+            color: #007bff;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .sidebar-text {
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Chat Pane -->
+        <div class="chat-pane">
+            <div class="chat-header">
+                <h1>Ibis Chatbot</h1>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be inserted here -->
+            </div>
+            
+            <div class="chat-input-area">
+                <div class="options-container" id="optionsContainer">
+                    <!-- Option buttons will be inserted here -->
+                </div>
+                
+                <div class="input-row">
+                    <input type="text" id="messageInput" class="message-input" 
+                           placeholder="Type your message..." autocomplete="off">
+                    <button id="sendButton" class="send-button">Send</button>
+                    <button id="goBackButton" class="go-back-button">Go Back</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar Pane -->
+        <div class="sidebar-pane">
+            <div class="sidebar-title">Information</div>
+            <div id="sidebarContent">
+                <!-- Sidebar content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ChatApp {
+            constructor() {
+                this.messageInput = document.getElementById('messageInput');
+                this.sendButton = document.getElementById('sendButton');
+                this.goBackButton = document.getElementById('goBackButton');
+                this.chatMessages = document.getElementById('chatMessages');
+                this.optionsContainer = document.getElementById('optionsContainer');
+                this.sidebarContent = document.getElementById('sidebarContent');
+                
+                this.initializeEventListeners();
+                this.loadMessages();
+            }
+            
+            initializeEventListeners() {
+                this.sendButton.addEventListener('click', () => this.sendMessage());
+                this.goBackButton.addEventListener('click', () => this.goBack());
+                
+                this.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.sendMessage();
+                    }
+                });
+            }
+            
+            async loadMessages() {
+                try {
+                    const response = await fetch('/api/messages');
+                    const data = await response.json();
+                    
+                    this.displayMessages(data.messages);
+                    this.updateOptions(data.current_options);
+                    this.loadSidebars(data.active_sidebars);
+                    this.updateGoBackButton(data.can_go_back);
+                } catch (error) {
+                    this.showError('Failed to load messages');
+                }
+            }
+            
+            async sendMessage(text = null) {
+                const messageText = text || this.messageInput.value.trim();
+                if (!messageText) return;
+                
+                try {
+                    const response = await fetch('/api/send_message', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text: messageText })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        this.showError(data.error);
+                        return;
+                    }
+                    
+                    // Add new messages
+                    this.displayMessages(data.new_messages, true);
+                    this.updateOptions(data.current_options);
+                    this.loadSidebars(data.active_sidebars);
+                    this.updateGoBackButton(data.can_go_back);
+                    
+                    // Clear input
+                    this.messageInput.value = '';
+                    
+                } catch (error) {
+                    this.showError('Failed to send message');
+                }
+            }
+            
+            async goBack() {
+                try {
+                    const response = await fetch('/api/go_back', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    const data = await response.json();
+                    
+                    // Remove messages with the specified IDs
+                    data.removed_message_ids.forEach(id => {
+                        const messageElement = document.querySelector(`[data-message-id="${id}"]`);
+                        if (messageElement) {
+                            messageElement.remove();
+                        }
+                    });
+                    
+                    this.updateOptions(data.current_options);
+                    this.loadSidebars(data.active_sidebars);
+                    this.updateGoBackButton(data.can_go_back);
+                    
+                } catch (error) {
+                    this.showError('Failed to go back');
+                }
+            }
+            
+            displayMessages(messages, append = false) {
+                if (!append) {
+                    this.chatMessages.innerHTML = '';
+                }
+                
+                messages.forEach(message => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${message.role}-message`;
+                    messageDiv.setAttribute('data-message-id', message.id);
+                    messageDiv.textContent = message.text;
+                    this.chatMessages.appendChild(messageDiv);
+                });
+                
+                this.scrollToBottom();
+            }
+            
+            updateOptions(options) {
+                this.optionsContainer.innerHTML = '';
+                
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.className = 'option-button';
+                    button.textContent = option;
+                    button.addEventListener('click', () => this.sendMessage(option));
+                    this.optionsContainer.appendChild(button);
+                });
+            }
+            
+            updateGoBackButton(canGoBack) {
+                this.goBackButton.disabled = !canGoBack;
+            }
+            
+            async loadSidebars(sidebarFiles) {
+                this.sidebarContent.innerHTML = '';
+                
+                if (sidebarFiles.length === 0) {
+                    this.sidebarContent.innerHTML = '<p>No additional information available.</p>';
+                    return;
+                }
+                
+                for (const filename of sidebarFiles) {
+                    try {
+                        const response = await fetch(`/api/sidebar/${filename}`);
+                        const data = await response.json();
+                        
+                        if (data.content) {
+                            const sidebarDiv = document.createElement('div');
+                            sidebarDiv.className = 'sidebar-content';
+                            
+                            const title = document.createElement('div');
+                            title.className = 'sidebar-title';
+                            title.textContent = filename.replace('.md', '').replace('_', ' ');
+                            
+                            const content = document.createElement('div');
+                            content.className = 'sidebar-text';
+                            content.innerHTML = data.content.replace(/\n/g, '<br>');
+                            
+                            sidebarDiv.appendChild(title);
+                            sidebarDiv.appendChild(content);
+                            this.sidebarContent.appendChild(sidebarDiv);
+                        }
+                    } catch (error) {
+                        console.error(`Failed to load sidebar: ${filename}`, error);
+                    }
+                }
+            }
+            
+            showError(message) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.textContent = message;
+                this.chatMessages.appendChild(errorDiv);
+                this.scrollToBottom();
+                
+                // Remove error after 5 seconds
+                setTimeout(() => {
+                    if (errorDiv.parentNode) {
+                        errorDiv.parentNode.removeChild(errorDiv);
+                    }
+                }, 5000);
+            }
+            
+            scrollToBottom() {
+                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+            }
+        }
+        
+        // Initialize the app when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ChatApp();
+        });
+    </script>
+</body>
+</html> 
