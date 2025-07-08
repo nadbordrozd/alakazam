@@ -1,0 +1,3 @@
+# Slowpoke Tail Confit
+
+**Preparation:** This legendary delicacy requires patience befitting the Pokemon itself. Gently cure the Slowpoke tail in coarse salt, pink peppercorns, and thyme for 24 hours, then rinse and pat dry. Submerge in duck fat heated to exactly 140°F and cook slowly for 4-6 hours until the meat becomes impossibly tender and practically falls off the bone. The resulting dish has an otherworldly richness, with meat so succulent it seems to melt on the tongue before you even realize you're chewing. Serve on a bed of wild mushroom risotto with a drizzle of the cooking fat and fresh herbs - though be warned, the preparation time matches the Pokemon's notoriously slow reflexes, making this a dish that truly rewards patience.

@@ -1,0 +1,3 @@
+# Grilled Magikarp with Lemon Butter
+
+**Preparation:** Start by carefully descaling your freshly caught Magikarp, being mindful of its tendency to splash even when unconscious. Season the firm, surprisingly meaty fish with sea salt, cracked pepper, and a hint of kelp powder. Grill over medium-high heat for 6-8 minutes per side until the scales develop a beautiful golden crisp and the flesh flakes easily with a fork. Baste frequently with clarified butter infused with fresh lemon juice and dill. Despite its reputation for being weak in battle, Magikarp's meat is surprisingly robust and flavorful, with a texture reminiscent of salmon but with a subtle briny sweetness that pairs excellently with roasted vegetables and wild rice.
