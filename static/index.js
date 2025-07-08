@@ -19,6 +19,9 @@ class PokemonChatbot {
 
     async makeChoice(choice) {
         this.addUserMessage(choice);
+        
+        // Disable all buttons while processing
+        this.setAllButtonsState(false);
 
         try {
             const response = await fetch('/api/choice', {
@@ -33,6 +36,9 @@ class PokemonChatbot {
             this.handleBotResponse(data);
         } catch (error) {
             this.showError('Failed to process choice');
+        } finally {
+            // Re-enable all buttons
+            this.setAllButtonsState(true);
         }
     }
 
@@ -120,9 +126,18 @@ class PokemonChatbot {
     }
 
     async restart() {
+        // Disable all buttons while restarting
+        this.setAllButtonsState(false);
+        
         this.chatMessages.innerHTML = '';
         this.sidebarContent.innerHTML = '<p class="loading">Loading...</p>';
-        await this.initializeChat();
+        
+        try {
+            await this.initializeChat();
+        } finally {
+            // Re-enable all buttons
+            this.setAllButtonsState(true);
+        }
     }
 
     async loadSidebarContent(sidebarFiles) {
@@ -172,6 +187,24 @@ class PokemonChatbot {
 
     scrollToBottom() {
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+    }
+    
+    setAllButtonsState(enabled) {
+        // Disable/enable all option buttons
+        const optionButtons = this.chatInput.querySelectorAll('.option-button');
+        optionButtons.forEach(button => {
+            button.disabled = !enabled;
+            button.style.opacity = enabled ? '1' : '0.6';
+            button.style.cursor = enabled ? 'pointer' : 'not-allowed';
+        });
+        
+        // Disable/enable restart button if it exists
+        const restartButton = this.chatInput.querySelector('.restart-button');
+        if (restartButton) {
+            restartButton.disabled = !enabled;
+            restartButton.style.opacity = enabled ? '1' : '0.6';
+            restartButton.style.cursor = enabled ? 'pointer' : 'not-allowed';
+        }
     }
 }
 

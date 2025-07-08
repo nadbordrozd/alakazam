@@ -43,9 +43,8 @@ class ChatApp {
         const messageText = text || this.messageInput.value.trim();
         if (!messageText) return;
         
-        // Disable send button and show loading state
-        this.setSendButtonState(false);
-        this.messageInput.disabled = true;
+        // Disable all buttons and inputs while bot is thinking
+        this.setAllButtonsState(false);
         
         try {
             // Step 1: Send user message immediately
@@ -59,8 +58,7 @@ class ChatApp {
             
             if (userData.error) {
                 this.showError(userData.error);
-                this.setSendButtonState(true);
-                this.messageInput.disabled = false;
+                this.setAllButtonsState(true);
                 return;
             }
             
@@ -81,6 +79,7 @@ class ChatApp {
             
             if (botData.error) {
                 this.showError(botData.error);
+                this.setAllButtonsState(true);
                 return;
             }
             
@@ -97,9 +96,8 @@ class ChatApp {
         } catch (error) {
             this.showError('Failed to send message');
         } finally {
-            // Re-enable send button and input
-            this.setSendButtonState(true);
-            this.messageInput.disabled = false;
+            // Re-enable all buttons and inputs
+            this.setAllButtonsState(true);
         }
     }
     
@@ -114,7 +112,30 @@ class ChatApp {
         }
     }
     
+    setAllButtonsState(enabled) {
+        // Disable/enable send button with visual feedback
+        this.setSendButtonState(enabled);
+        
+        // Disable/enable message input
+        this.messageInput.disabled = !enabled;
+        
+        // Disable/enable go back button
+        this.goBackButton.disabled = !enabled;
+        this.goBackButton.style.opacity = enabled ? '1' : '0.6';
+        
+        // Disable/enable all option buttons
+        const optionButtons = this.optionsContainer.querySelectorAll('.option-button');
+        optionButtons.forEach(button => {
+            button.disabled = !enabled;
+            button.style.opacity = enabled ? '1' : '0.6';
+            button.style.cursor = enabled ? 'pointer' : 'not-allowed';
+        });
+    }
+    
     async goBack() {
+        // Disable all buttons while processing go back
+        this.setAllButtonsState(false);
+        
         try {
             const response = await fetch('/api/go_back', {
                 method: 'POST',
@@ -138,6 +159,9 @@ class ChatApp {
             
         } catch (error) {
             this.showError('Failed to go back');
+        } finally {
+            // Re-enable all buttons and inputs
+            this.setAllButtonsState(true);
         }
     }
     
