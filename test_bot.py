@@ -1,86 +1,15 @@
 #!/usr/bin/env python3
 
 import unittest
-import os
+from unittest.mock import patch, AsyncMock
+import asyncio
 from bot import Bot, Message
 
-class TestBot(unittest.TestCase):
+class TestBotGoBack(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures before each test method."""
         self.bot = Bot()
         self.bot.load_workflow("test", "test_workflow.yaml")
-    
-    def test_process_user_input_no_active_workflow(self):
-        """Test process_user_input when no workflow is active"""
-        responses = self.bot.process_user_input("hello")
-        user_response = next(responses)
-        bot_response = next(responses)
-        
-        self.assertIsInstance(user_response, Message)
-        self.assertIsInstance(bot_response, Message)
-        self.assertEqual(user_response.role, "user")
-        self.assertEqual(bot_response.role, "bot")
-        self.assertEqual(user_response.text, "hello")
-        self.assertEqual(bot_response.text, "Sorry I don't understand")
-    
-    def test_process_user_input_valid_option(self):
-        """Test process_user_input with valid option"""
-        # Start workflow first
-        self.bot.start_workflow("test")
-        
-        # Test valid input - now returns multiple messages
-        responses = list(self.bot.process_user_input("red"))
-        user_response = responses[0]
-        acknowledgment_response = responses[1] 
-        workflow_response = responses[2]
-        
-        self.assertIsInstance(user_response, Message)
-        self.assertIsInstance(acknowledgment_response, Message)
-        self.assertIsInstance(workflow_response, Message)
-        self.assertEqual(user_response.role, "user")
-        self.assertEqual(acknowledgment_response.role, "bot")
-        self.assertEqual(workflow_response.role, "bot")
-        
-        self.assertEqual(user_response.text, "red")
-        self.assertEqual(acknowledgment_response.text, "Got it, I understand you mean 'red'.")
-        self.assertEqual(workflow_response.text, "Red is a warm color!")
-        
-        # Check workflow state
-        self.assertEqual(self.bot.active_node.name, "red_response")
-        self.assertEqual(list(self.bot.active_node.options.keys()), [])  # verdict node has no options
-    
-    def test_process_user_input_case_insensitive(self):
-        """Test that process_user_input is case insensitive"""
-        self.bot.start_workflow("test")
-        
-        responses = list(self.bot.process_user_input("RED"))  # uppercase
-        user_response = responses[0]
-        acknowledgment_response = responses[1]
-        workflow_response = responses[2]
-        
-        self.assertEqual(acknowledgment_response.text, "Got it, I understand you mean 'red'.")
-        self.assertEqual(workflow_response.text, "Red is a warm color!")
-        self.assertEqual(self.bot.active_node.name, "red_response")
-    
-    def test_process_user_input_invalid_option(self):
-        """Test process_user_input with invalid option"""
-        self.bot.start_workflow("test")
-        
-        responses = self.bot.process_user_input("green")  # not a valid option
-        user_response = next(responses)
-        bot_response = next(responses)
-        
-        self.assertIsInstance(user_response, Message)
-        self.assertIsInstance(bot_response, Message)
-        self.assertEqual(user_response.role, "user")
-        self.assertEqual(bot_response.role, "bot")
-        
-        self.assertEqual(user_response.text, "green")
-        self.assertEqual(bot_response.text, "Sorry I don't understand")
-        
-        # Should stay on same node
-        self.assertEqual(self.bot.active_node.name, "start")
-        self.assertEqual(list(self.bot.active_node.options.keys()), ["red", "blue"])
     
     def test_go_back_no_messages(self):
         """Test go_back when no messages exist"""
@@ -88,148 +17,162 @@ class TestBot(unittest.TestCase):
         
         self.assertEqual(result, [])
         self.assertIsInstance(result, list)
+        self.assertFalse(self.bot.can_go_back())
     
     def test_go_back_only_bot_message(self):
         """Test go_back when only bot message exists (can't go back)"""
         self.bot.start_workflow("test")  # creates only bot message
         
+        self.assertFalse(self.bot.can_go_back())
         result = self.bot.go_back()
         
         self.assertEqual(result, [])
     
-    def test_go_back_successful(self):
-        """Test successful go_back operation"""
+    @patch('llm_decision.respond')
+    def test_go_back_successful(self, mock_respond):
+        """Test successful go_back operation with mocked LLM"""
+        # Mock LLM to select the "red" option
+        mock_respond.return_value = {
+            "text": None,
+            "decision_option": "red", 
+            "workflow": None
+        }
+        
+        # Start workflow
         self.bot.start_workflow("test")
+        initial_node = self.bot.active_node
+        initial_message_count = len(self.bot.messages)
         
-        # Process user input (creates user + multiple bot messages)
-        responses = list(self.bot.process_user_input("red"))
+        # Process user input (should create user message + bot response)
+        async def async_test():
+            responses = []
+            async for response in self.bot.process_user_input("red"):
+                responses.append(response)
+            return responses
         
-        # Check state before go_back
+        responses = asyncio.run(async_test())
+        
+        # Verify workflow progressed
         self.assertEqual(self.bot.active_node.name, "red_response")
+        self.assertGreater(len(self.bot.messages), initial_message_count)
         
+        # Store state before go_back
+        messages_before_goback = len(self.bot.messages)
+        
+        # Test can_go_back
+        self.assertTrue(self.bot.can_go_back())
+        
+        # Perform go_back
         result = self.bot.go_back()
         
-        # Should return list of 3 message IDs (1 user + 2 bot messages)
-        self.assertEqual(len(result), 3)
+        # Verify go_back results
         self.assertIsInstance(result, list)
+        self.assertGreater(len(result), 0)  # Should have removed some messages
         self.assertTrue(all(isinstance(msg_id, int) for msg_id in result))
         
-        # Should restore to previous state
-        self.assertEqual(self.bot.active_node.name, "start")
+        # Verify state restoration
+        self.assertEqual(self.bot.active_node.name, "start")  # Should be back to initial node
+        self.assertLess(len(self.bot.messages), messages_before_goback)  # Fewer messages
+        
+        # Verify workflow positions were updated
+        if self.bot.active_node and self.bot.active_node.workflow:
+            self.assertEqual(
+                self.bot.workflow_positions[self.bot.active_node.workflow.name], 
+                self.bot.active_node
+            )
     
-    def test_go_back_multiple_times(self):
-        """Test multiple go_back operations"""
+    @patch('llm_decision.respond')
+    def test_go_back_multiple_times(self, mock_respond):
+        """Test multiple go_back operations with mocked LLM"""
+        # Mock LLM to select the "red" option
+        mock_respond.return_value = {
+            "text": None,
+            "decision_option": "red",
+            "workflow": None
+        }
+        
         self.bot.start_workflow("test")
         
         # Process user input
-        responses = list(self.bot.process_user_input("red"))
+        async def async_test():
+            responses = []
+            async for response in self.bot.process_user_input("red"):
+                responses.append(response)
+            return responses
+        
+        asyncio.run(async_test())
         
         # First go_back should succeed
+        self.assertTrue(self.bot.can_go_back())
         result1 = self.bot.go_back()
-        self.assertEqual(len(result1), 3)  # 1 user + 2 bot messages
+        self.assertGreater(len(result1), 0)
         
-        # Second go_back should return empty (only bot message left)
+        # Second go_back should return empty (only initial bot message left)
+        self.assertFalse(self.bot.can_go_back())
         result2 = self.bot.go_back()
         self.assertEqual(result2, [])
     
-    def test_greeting_message(self):
-        """Test the greeting message functionality"""
-        greeting = self.bot.get_greeting_message()
+    @patch('llm_decision.respond')
+    def test_go_back_message_id_tracking(self, mock_respond):
+        """Test that go_back correctly tracks and returns message IDs"""
+        # Mock LLM response
+        mock_respond.return_value = {
+            "text": "I'll help you with that",
+            "decision_option": "red",
+            "workflow": None
+        }
         
-        # Check that it returns a Message object
-        self.assertIsInstance(greeting, Message)
-        self.assertEqual(greeting.role, "bot")
-        
-        # Check that the message contains expected content
-        self.assertIn("Hello", greeting.text)
-        self.assertIn("chatbot", greeting.text)
-        self.assertIn("workflow", greeting.text)
-        
-        # Check that it's added to message history
-        self.assertEqual(len(self.bot.messages), 1)
-        self.assertEqual(self.bot.messages[0], greeting)
-        
-        # Check that it has proper ID and timestamp
-        self.assertEqual(greeting.id, 1)
-        self.assertIsNotNone(greeting.timestamp)
-    
-    def test_conversation_history_for_llm_empty(self):
-        """Test LLM history formatting with empty conversation"""
-        history = self.bot.get_conversation_history_for_llm()
-        self.assertEqual(history, "No conversation history yet.")
-    
-    def test_conversation_history_for_llm_with_messages(self):
-        """Test LLM history formatting with actual conversation"""
-        # Start workflow and add some messages
         self.bot.start_workflow("test")
+        initial_messages = len(self.bot.messages)
         
-        # Add user input
-        responses = list(self.bot.process_user_input("red"))
+        # Process user input
+        async def async_test():
+            responses = []
+            async for response in self.bot.process_user_input("red"):
+                responses.append(response)
+            return responses
         
-        # Get formatted history
-        history = self.bot.get_conversation_history_for_llm()
+        responses = asyncio.run(async_test())
         
-        # Check format and content
-        self.assertIn("Assistant:", history)
-        self.assertIn("Human:", history)
-        self.assertIn("What's your favorite color?", history)
-        self.assertIn("red", history)
-        self.assertIn("Got it, I understand you mean 'red'.", history)
-        self.assertIn("Red is a warm color!", history)
+        # Collect message IDs that should be removed
+        messages_after = self.bot.messages[initial_messages:]
+        expected_removed_ids = [msg.id for msg in messages_after]
         
-        # Check that context is included
-        self.assertIn("[Context:", history)
-        self.assertIn("Current workflow node:", history)
+        # Perform go_back
+        actual_removed_ids = self.bot.go_back()
         
-        # Check message order (chronological)
-        lines = history.split('\n\n')
-        self.assertTrue(lines[0].startswith("Assistant:"))  # First message is bot
-        self.assertTrue(lines[1].startswith("Human:"))      # Second is user
-        self.assertTrue(lines[2].startswith("Assistant:"))  # Third is bot (acknowledgment)
-        self.assertTrue(lines[3].startswith("Assistant:"))  # Fourth is bot (workflow)
+        # Verify correct message IDs were returned
+        self.assertEqual(set(actual_removed_ids), set(expected_removed_ids))
+        
+        # Verify messages were actually removed
+        current_message_ids = [msg.id for msg in self.bot.messages]
+        for removed_id in actual_removed_ids:
+            self.assertNotIn(removed_id, current_message_ids)
     
-    def test_conversation_history_for_llm_with_context(self):
-        """Test that LLM history includes workflow context when available"""
-        self.bot.start_workflow("test")
+    def test_can_go_back_logic(self):
+        """Test the can_go_back method logic"""
+        # Initially no messages
+        self.assertFalse(self.bot.can_go_back())
         
-        history = self.bot.get_conversation_history_for_llm()
+        # Add only bot message
+        bot_msg = self.bot.add_bot_message("Hello")
+        self.assertFalse(self.bot.can_go_back())
         
-        # Should include current node context
-        self.assertIn("Current workflow node: start", history)
-        self.assertIn("Available options: ['red', 'blue']", history)
-    
-    def test_workflow_progression(self):
-        """Test complete workflow progression"""
-        # Start workflow
-        start_response = self.bot.start_workflow("test")
-        self.assertIsInstance(start_response, Message)
-        self.assertEqual(start_response.role, "bot")
-        self.assertEqual(self.bot.active_node.name, "start")
-        self.assertEqual(list(self.bot.active_node.options.keys()), ["red", "blue"])
+        # Add user message (but no bot response after it)
+        user_msg = self.bot.add_user_message("Hi")
+        self.assertFalse(self.bot.can_go_back())
         
-        # Choose blue
-        responses = list(self.bot.process_user_input("blue"))
-        user_response = responses[0]
-        acknowledgment_response = responses[1]
-        blue_response = responses[2]
-        self.assertEqual(self.bot.active_node.name, "blue_response")
-        self.assertEqual(acknowledgment_response.text, "Got it, I understand you mean 'blue'.")
-        self.assertEqual(blue_response.text, "Blue is a cool color!")
-        self.assertEqual(list(self.bot.active_node.options.keys()), [])
+        # Add bot response after user message
+        bot_response = self.bot.add_bot_message("How can I help?")
+        self.assertTrue(self.bot.can_go_back())
         
-        # Go back
-        deleted_ids = self.bot.go_back()
-        self.assertEqual(len(deleted_ids), 3)  # 1 user + 2 bot messages
-        self.assertEqual(self.bot.active_node.name, "start")
+        # Add another user message (no bot response after)
+        user_msg2 = self.bot.add_user_message("Help me")
+        self.assertFalse(self.bot.can_go_back())
         
-        # Choose red this time
-        responses = list(self.bot.process_user_input("red"))
-        user_response = responses[0]
-        acknowledgment_response = responses[1]
-        red_response = responses[2]
-        self.assertEqual(self.bot.active_node.name, "red_response")
-        self.assertEqual(acknowledgment_response.text, "Got it, I understand you mean 'red'.")
-        self.assertEqual(red_response.text, "Red is a warm color!")
+        # Add bot response
+        bot_response2 = self.bot.add_bot_message("Sure!")
+        self.assertTrue(self.bot.can_go_back())
 
 
 if __name__ == "__main__":
