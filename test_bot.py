@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 
 import unittest
-from unittest.mock import patch, AsyncMock
+from unittest.mock import patch, AsyncMock, MagicMock
 import asyncio
 from bot import Bot, Message
 
 class TestBotGoBack(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures before each test method."""
-        self.bot = Bot()
+        # Mock KnowledgeBaseStore to prevent API calls during testing
+        with patch('bot.KnowledgeBaseStore') as mock_kb_store:
+            mock_kb_store.return_value = MagicMock()
+            self.bot = Bot()
         self.bot.load_workflow("test", "test_workflow.yaml")
     
     def test_go_back_no_messages(self):
