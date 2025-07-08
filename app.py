@@ -60,6 +60,8 @@ def send_message():
 @app.route('/api/process_bot_response', methods=['POST'])
 def process_bot_response():
     """Process bot response based on the last user message"""
+    import asyncio
+    
     try:
         # Get the last user message
         last_user_msg = None
@@ -72,7 +74,7 @@ def process_bot_response():
             return jsonify({'error': 'No user message to process'}), 400
         
         # Let the Bot handle the response processing (may use LLM internally)
-        bot_messages = bot.process_bot_response()
+        bot_messages = asyncio.run(bot.process_bot_response())
         
         # Convert to dict format
         new_bot_messages = [msg.to_dict() for msg in bot_messages]

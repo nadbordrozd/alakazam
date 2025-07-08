@@ -2,6 +2,7 @@ from typing import Dict, Optional, Any, List
 from datetime import datetime
 from dataclasses import dataclass
 from workflow import Workflow, WorkflowNode
+from llm_decision import respond
 
 # Unified message class for both user and bot messages
 @dataclass
@@ -66,12 +67,7 @@ class Bot:
             self.workflow_positions[node.workflow.name] = node
         self.active_node = node
     
-    def switch_workflow(self, workflow: Workflow):
-        """Switch to a different workflow"""
-        self.active_node = self.workflow_positions.get(workflow.name)
-        # If no node is saved for this workflow, set to first node
-        if not self.active_node and workflow:
-            self.active_node = workflow.get_first_node()
+
     
     def can_go_back(self) -> bool:
         """Check if we can go back"""
@@ -115,7 +111,7 @@ class Bot:
         # Add and return bot message
         return self.add_bot_message(self._get_bot_text(first_node))
     
-    def process_user_input(self, text: str):
+    async def process_user_input(self, text: str):
         """Process user input - yields user message immediately, then bot response"""
         # Add user message first
         user_msg = self.add_user_message(text)
@@ -124,17 +120,14 @@ class Bot:
         yield user_msg
         
         # Process bot response (may take time with LLM)
-        bot_messages = self.process_bot_response()
+        bot_messages = await self.process_bot_response()
         
         # Yield each bot message
         for bot_msg in bot_messages:
             yield bot_msg
     
-    def process_bot_response(self) -> List[Message]:
+    async def process_bot_response(self) -> List[Message]:
         """Process bot response based on the last user message"""
-        # Import here to avoid circular imports
-        from llm_decision import process_user_input_with_llm
-        
         # Get context for LLM decision
         available_options = list(self.active_node.options.keys()) if self.active_node else []
         available_workflows = list(self.workflows.keys())
@@ -144,7 +137,7 @@ class Bot:
         }
         
         # Let LLM decide what to do
-        decision = process_user_input_with_llm(self.messages, available_options, available_workflows, current_node_context)
+        decision = await respond(self.messages, available_options, available_workflows, current_node_context)
         
         bot_messages = []
         
@@ -206,8 +199,7 @@ class Bot:
         
         return removed_message_ids
     
-
-    
+   
     def get_active_sidebars(self) -> List[str]:
         """Get the sidebar files for the currently active workflow node"""
         if self.active_node:
@@ -230,52 +222,3 @@ class Bot:
         else:
             return "Something went wrong"
 
-
-# Example usage
-if __name__ == "__main__":
-    bot = Bot()
-    
-    # Load workflows
-    bot.load_workflow("pet_advisor", "workflows/good_pet_determination.yaml")
-    bot.load_workflow("edibility_check", "workflows/edibility_determination.yaml")
-    
-    # Show greeting message
-    print("=== Bot Greeting ===")
-    greeting = bot.get_greeting_message()
-    print(f"Bot: {greeting.text}")
-    
-    # Start workflow
-    print("\n=== Starting pet advisor workflow ===")
-    response = bot.start_workflow("pet_advisor")
-    print(f"Bot: {response.text}")
-    print(f"Options: {list(bot.active_node.options.keys())}")
-    
-    # Test valid input (generator approach)
-    print("\n=== Testing 'no' (generator approach) ===")
-    responses = bot.process_user_input("no")
-    user_response = next(responses)
-    print(f"User (immediate): {user_response.text}")
-    
-    bot_response = next(responses)
-    print(f"Bot: {bot_response.text}")
-    print(f"Options: {list(bot.active_node.options.keys())}")
-    
-    # Test invalid input (generator approach)
-    print("\n=== Testing 'maybe' (generator approach) ===")
-    responses = bot.process_user_input("maybe")
-    user_response = next(responses)
-    print(f"User (immediate): {user_response.text}")
-    
-    bot_response = next(responses)
-    print(f"Bot: {bot_response.text}")
-    print(f"Current node: {bot.active_node.name}")
-    
-    # Test go back
-    print("\n=== Testing go back ===")
-    deleted_ids = bot.go_back()
-    print(f"Deleted message IDs: {deleted_ids}")
-    
-    # Test message list
-    print("\n=== Message List ===")
-    for msg in bot.messages:
-        print(f"{msg.role}: {msg.text}") 

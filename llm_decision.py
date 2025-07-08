@@ -1,25 +1,36 @@
 #!/usr/bin/env python3
 
-import os
 import json
 from typing import List, Dict, Optional, Any
-from openai import OpenAI
-from dotenv import load_dotenv
+from llm_client import get_completion_async
 
-# Load environment variables from .env file
-load_dotenv()
 
-# Initialize OpenAI client
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+def _convert_messages_to_openai_format(messages: List[Any]) -> List[Dict[str, str]]:
+    """
+    Convert Message objects to OpenAI chat format.
+    
+    Args:
+        messages: List of Message objects
+        
+    Returns:
+        List of dictionaries with 'role' and 'content' keys for OpenAI API
+    """
+    openai_messages = []
+    for message in messages:
+        openai_messages.append({
+            "role": "assistant" if message.role == "bot" else message.role,
+            "content": message.text
+        })
+    return openai_messages
 
-def process_user_input_with_llm(
+async def respond(
     messages: List[Any],  # List of Message objects
     available_options: List[str], 
     available_workflows: List[str],
     current_node_context: Dict[str, Any]
 ) -> Dict[str, Optional[str]]:
     """
-    Process user input using OpenAI GPT-4 to determine next action.
+    Generate LLM response to determine next action.
     
     Args:
         messages: List of Message objects from the conversation
@@ -89,16 +100,21 @@ IMPORTANT RULES:
     api_messages.append({"role": "user", "content": context_message})
 
     try:
-        # Call OpenAI API
-        response = client.chat.completions.create(
-            model="gpt-4.1",
+        # Call OpenAI API via async client
+        llm_response = await get_completion_async(
             messages=api_messages,
-            temperature=0.3,  # Lower temperature for more consistent responses
-            max_tokens=500,   # Reasonable limit for responses
+            model="gpt-4o",  # Updated to use gpt-4o (latest model)
+            temperature=0.3  # Lower temperature for more consistent responses
         )
         
-        # Extract the response content
-        llm_response = response.choices[0].message.content.strip()
+        # Extract and clean the response content
+        llm_response = llm_response.strip()
+        
+        # Handle markdown-wrapped JSON (```json ... ```)
+        if llm_response.startswith("```json") and llm_response.endswith("```"):
+            llm_response = llm_response[7:-3].strip()  # Remove ```json and ```
+        elif llm_response.startswith("```") and llm_response.endswith("```"):
+            llm_response = llm_response[3:-3].strip()  # Remove ``` and ```
         
         # Try to parse as JSON
         try:
