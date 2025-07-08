@@ -43,6 +43,17 @@
                 <!-- Sidebar content will be inserted here -->
             </div>
         </div>
+        
+        <!-- Knowledge Base Pane -->
+        <div class="knowledge-base-pane">
+            <div class="knowledge-base-header">
+                <h3>Knowledge Base</h3>
+                <span class="knowledge-base-subtitle">Relevant context for responses</span>
+            </div>
+            <div id="knowledgeBaseContent">
+                <p class="knowledge-base-empty">No context available yet. Send a message to see relevant information from the knowledge base.</p>
+            </div>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='chat.js') }}"></script>

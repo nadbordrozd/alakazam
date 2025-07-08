@@ -8,6 +8,7 @@ class ChatApp {
         this.sidebarContent = document.getElementById('sidebarContent');
         this.workflowIndicator = document.getElementById('workflowIndicator');
         this.workflowName = document.getElementById('workflowName');
+        this.knowledgeBaseContent = document.getElementById('knowledgeBaseContent');
         
         this.initializeEventListeners();
         this.loadMessages();
@@ -34,6 +35,7 @@ class ChatApp {
             this.loadSidebars(data.active_sidebars);
             this.updateGoBackButton(data.can_go_back);
             this.updateWorkflowIndicator(data.current_workflow);
+            this.updateKnowledgeBase(data.knowledge_snippets);
         } catch (error) {
             this.showError('Failed to load messages');
         }
@@ -92,6 +94,7 @@ class ChatApp {
             this.loadSidebars(botData.active_sidebars);
             this.updateGoBackButton(botData.can_go_back);
             this.updateWorkflowIndicator(botData.current_workflow);
+            this.updateKnowledgeBase(botData.knowledge_snippets);
             
         } catch (error) {
             this.showError('Failed to send message');
@@ -156,6 +159,7 @@ class ChatApp {
             this.loadSidebars(data.active_sidebars);
             this.updateGoBackButton(data.can_go_back);
             this.updateWorkflowIndicator(data.current_workflow);
+            this.updateKnowledgeBase(data.knowledge_snippets);
             
         } catch (error) {
             this.showError('Failed to go back');
@@ -264,6 +268,76 @@ class ChatApp {
             this.workflowName.textContent = 'None Active';
             this.workflowIndicator.classList.add('hidden');
         }
+    }
+    
+    updateKnowledgeBase(snippets) {
+        this.knowledgeBaseContent.innerHTML = '';
+        
+        if (!snippets || snippets.length === 0) {
+            this.knowledgeBaseContent.innerHTML = '<p class="knowledge-base-empty">No relevant knowledge found for this conversation.</p>';
+            return;
+        }
+        
+        snippets.forEach((snippet, index) => {
+            const snippetDiv = document.createElement('div');
+            snippetDiv.className = 'knowledge-snippet';
+            
+            // Create header with source and score
+            const header = document.createElement('div');
+            header.className = 'snippet-header';
+            
+            const source = document.createElement('div');
+            source.className = 'snippet-source';
+            source.textContent = snippet.file_name.replace('.txt', '').replace('_', ' ');
+            
+            const score = document.createElement('div');
+            score.className = 'snippet-score';
+            score.textContent = snippet.score ? `${(snippet.score * 100).toFixed(1)}%` : 'Relevant';
+            
+            header.appendChild(source);
+            header.appendChild(score);
+            
+            // Create content
+            const content = document.createElement('div');
+            content.className = 'snippet-content';
+            
+            // Truncate long content
+            const maxLength = 300;
+            let displayContent = snippet.content;
+            let isTruncated = false;
+            
+            if (displayContent.length > maxLength) {
+                displayContent = displayContent.substring(0, maxLength);
+                isTruncated = true;
+                content.classList.add('truncated');
+            }
+            
+            content.textContent = displayContent;
+            
+            snippetDiv.appendChild(header);
+            snippetDiv.appendChild(content);
+            
+            // Add expand button for truncated content
+            if (isTruncated) {
+                const expandButton = document.createElement('button');
+                expandButton.className = 'snippet-expand';
+                expandButton.textContent = 'Show more...';
+                expandButton.addEventListener('click', () => {
+                    if (content.classList.contains('truncated')) {
+                        content.textContent = snippet.content;
+                        content.classList.remove('truncated');
+                        expandButton.textContent = 'Show less...';
+                    } else {
+                        content.textContent = displayContent;
+                        content.classList.add('truncated');
+                        expandButton.textContent = 'Show more...';
+                    }
+                });
+                snippetDiv.appendChild(expandButton);
+            }
+            
+            this.knowledgeBaseContent.appendChild(snippetDiv);
+        });
     }
 }
 

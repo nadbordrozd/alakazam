@@ -3,6 +3,7 @@ from datetime import datetime
 from dataclasses import dataclass
 from workflow import Workflow, WorkflowNode
 from llm_decision import respond
+from knowledge_base_store import KnowledgeBaseStore
 
 # Unified message class for both user and bot messages
 @dataclass
@@ -25,7 +26,7 @@ class Message:
 
 
 class Bot:
-    def __init__(self):
+    def __init__(self, embedding_model: str = "text-embedding-3-small", knowledge_base_dir: str = "knowledge_base", cache_dir: str = ".cache", context_messages_count: int = 5):
         # Former ConversationState fields
         self.messages: List[Message] = []
         self.next_message_id = 1
@@ -34,6 +35,15 @@ class Bot:
         
         # Bot functionality
         self.workflows: Dict[str, Workflow] = {}
+        self.context_messages_count = context_messages_count
+        
+        # Knowledge base
+        self.knowledge_base = KnowledgeBaseStore(
+            knowledge_base_dir=knowledge_base_dir,
+            cache_dir=cache_dir,
+            model_name=embedding_model
+        )
+        self.last_knowledge_snippets: List[Dict[str, Any]] = []
     
     # Former ConversationState methods
     def add_user_message(self, text: str) -> Message:
@@ -136,8 +146,11 @@ class Bot:
             'available_options': available_options
         }
         
+        # Generate knowledge base context from recent messages
+        context = self._generate_knowledge_context()
+        
         # Let LLM decide what to do
-        decision = await respond(self.messages, available_options, available_workflows, current_node_context)
+        decision = await respond(self.messages, available_options, available_workflows, current_node_context, context)
         
         bot_messages = []
         
@@ -199,6 +212,48 @@ class Bot:
         
         return removed_message_ids
     
+    def _generate_knowledge_context(self) -> str:
+        """Generate knowledge base context from recent conversation messages"""
+        # Clear previous snippets
+        self.last_knowledge_snippets = []
+        
+        if not self.messages:
+            return ""
+        
+        # Get the last n messages for context
+        recent_messages = self.messages[-self.context_messages_count:]
+        
+        # Create query string from recent messages
+        query_parts = []
+        for message in recent_messages:
+            query_parts.append(message.text)
+        
+        query_string = " ".join(query_parts)
+        
+        # Don't query if there's no meaningful content
+        if not query_string.strip():
+            return ""
+        
+        try:
+            # Retrieve relevant snippets from knowledge base
+            snippets = self.knowledge_base.retrieve_snippets(query_string, top_k=3)
+            
+            # Store snippets for frontend display
+            self.last_knowledge_snippets = snippets
+            
+            # Concatenate snippets into context
+            context_parts = []
+            for snippet in snippets:
+                # Add snippet content with source info
+                source_info = f"[From: {snippet['file_name']}]"
+                context_parts.append(f"{source_info}\n{snippet['content']}")
+            
+            return "\n\n".join(context_parts)
+            
+        except Exception as e:
+            # If knowledge base retrieval fails, return empty context
+            print(f"Error retrieving knowledge base context: {e}")
+            return ""
    
     def get_active_sidebars(self) -> List[str]:
         """Get the sidebar files for the currently active workflow node"""

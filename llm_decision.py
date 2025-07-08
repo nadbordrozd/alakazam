@@ -27,7 +27,8 @@ async def respond(
     messages: List[Any],  # List of Message objects
     available_options: List[str], 
     available_workflows: List[str],
-    current_node_context: Dict[str, Any]
+    current_node_context: Dict[str, Any],
+    context: str
 ) -> Dict[str, Optional[str]]:
     """
     Generate LLM response to determine next action.
@@ -37,6 +38,7 @@ async def respond(
         available_options: Current workflow options (empty if no active workflow)
         available_workflows: Available workflow names
         current_node_context: Context about the current workflow node
+        context: Relevant knowledge base snippets for context
     
     Returns:
         Dict with keys:
@@ -49,7 +51,9 @@ async def respond(
     conversation_messages = _convert_messages_to_openai_format(messages)
     
     # Create the system prompt
-    system_prompt = """You are an intelligent assistant helping users navigate through decision workflows. Your job is to:
+    context_section = context if context.strip() else "No specific context available for this conversation."
+    
+    system_prompt = f"""You are an intelligent assistant helping users navigate through decision workflows. Your job is to:
 
 1. Understand what the user wants to do based on their input and conversation history
 2. Decide the appropriate next action from the available options
@@ -65,13 +69,16 @@ AVAILABLE WORKFLOWS:
 - edibility_determination: Help determine if a Pokemon is safe to eat
 - good_pet_determination: Help determine if a Pokemon would make a good pet
 
+RELEVANT KNOWLEDGE BASE CONTEXT:
+{context_section}
+
 RESPONSE FORMAT:
 You must respond with a valid JSON object containing exactly these fields:
-{
+{{
     "text": "Your conversational response to the user (OPTIONAL - see rules below)",
     "decision_option": "exact_option_name_if_selecting_one" or null,
     "workflow": "exact_workflow_name_if_starting_one" or null
-}
+}}
 
 IMPORTANT RULES:
 - If you select a decision_option, it must be exactly one of the available options

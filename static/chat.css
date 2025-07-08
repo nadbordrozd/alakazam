@@ -21,13 +21,23 @@ body {
     flex-direction: column;
     background-color: white;
     border-right: 1px solid #ddd;
+    min-width: 400px;
 }
 
 .sidebar-pane {
-    width: 350px;
+    width: 300px;
     background-color: #f8f9fa;
     padding: 20px;
     overflow-y: auto;
+    border-right: 1px solid #ddd;
+}
+
+.knowledge-base-pane {
+    width: 350px;
+    background-color: #f0f8ff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .chat-header {
@@ -198,5 +208,111 @@ body {
     color: #721c24;
     padding: 10px;
     border-radius: 5px;
+}
+
+/* Knowledge Base Pane Styles */
+.knowledge-base-header {
+    background-color: #4a90e2;
+    color: white;
+    padding: 15px 20px;
+    border-bottom: 1px solid #357abd;
+}
+
+.knowledge-base-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.knowledge-base-subtitle {
+    font-size: 12px;
+    opacity: 0.9;
+    display: block;
+    margin-top: 2px;
+}
+
+#knowledgeBaseContent {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: white;
+}
+
+.knowledge-base-empty {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.knowledge-snippet {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     margin-bottom: 15px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.snippet-header {
+    background-color: #f8f9fa;
+    padding: 10px 15px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.snippet-source {
+    font-weight: 600;
+    color: #4a90e2;
+    font-size: 14px;
+}
+
+.snippet-score {
+    background-color: #e7f3ff;
+    color: #4a90e2;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.snippet-content {
+    padding: 15px;
+    line-height: 1.6;
+    color: #333;
+    font-size: 14px;
+}
+
+.snippet-content.truncated {
+    max-height: 120px;
+    overflow: hidden;
+    position: relative;
+}
+
+.snippet-content.truncated::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(transparent, white);
+}
+
+.snippet-expand {
+    background: none;
+    border: none;
+    color: #4a90e2;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 5px 15px;
+    text-align: left;
+    width: 100%;
+    border-top: 1px solid #f0f0f0;
+}
+
+.snippet-expand:hover {
+    background-color: #f8f9fa;
 } 

@@ -37,7 +37,8 @@ def get_messages():
         'current_options': current_options,
         'active_sidebars': active_sidebars,
         'can_go_back': bot.can_go_back(),
-        'current_workflow': bot.get_current_workflow_name()
+        'current_workflow': bot.get_current_workflow_name(),
+        'knowledge_snippets': bot.last_knowledge_snippets
     })
 
 @app.route('/api/send_message', methods=['POST'])
@@ -88,7 +89,8 @@ def process_bot_response():
             'current_options': current_options,
             'active_sidebars': active_sidebars,
             'can_go_back': bot.can_go_back(),
-            'current_workflow': bot.get_current_workflow_name()
+            'current_workflow': bot.get_current_workflow_name(),
+            'knowledge_snippets': bot.last_knowledge_snippets
         })
         
     except Exception as e:
@@ -112,7 +114,8 @@ def go_back():
         'current_options': current_options,
         'active_sidebars': active_sidebars,
         'can_go_back': bot.can_go_back(),
-        'current_workflow': bot.get_current_workflow_name()
+        'current_workflow': bot.get_current_workflow_name(),
+        'knowledge_snippets': bot.last_knowledge_snippets
     })
 
 @app.route('/api/sidebar/<filename>')
