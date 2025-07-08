@@ -21,11 +21,10 @@ body {
     flex-direction: column;
     background-color: white;
     border-right: 1px solid #ddd;
-    min-width: 400px;
 }
 
 .sidebar-pane {
-    width: 300px;
+    flex: 1;
     background-color: #f8f9fa;
     padding: 20px;
     overflow-y: auto;
@@ -33,7 +32,7 @@ body {
 }
 
 .knowledge-base-pane {
-    width: 350px;
+    flex: 1;
     background-color: #f0f8ff;
     display: flex;
     flex-direction: column;
