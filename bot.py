@@ -1,8 +1,9 @@
 from typing import Dict, Optional, Any, List
 from datetime import datetime
 from dataclasses import dataclass
+import asyncio
 from workflow import Workflow, WorkflowNode
-from llm_decision import respond
+from llm_decision import respond, is_relevant
 from knowledge_base_store import KnowledgeBaseStore
 
 # Unified message class for both user and bot messages
@@ -26,7 +27,7 @@ class Message:
 
 
 class Bot:
-    def __init__(self, embedding_model: str = "text-embedding-3-small", knowledge_base_dir: str = "knowledge_base", cache_dir: str = ".cache", context_messages_count: int = 5):
+    def __init__(self, embedding_model: str = "text-embedding-3-small", knowledge_base_dir: str = "knowledge_base", cache_dir: str = ".cache", context_messages_count: int = 5, relevance_model: str = "gpt-4o", relevance_messages_count: int = 5):
         # Former ConversationState fields
         self.messages: List[Message] = []
         self.next_message_id = 1
@@ -36,6 +37,10 @@ class Bot:
         # Bot functionality
         self.workflows: Dict[str, Workflow] = {}
         self.context_messages_count = context_messages_count
+        
+        # Relevance filtering parameters
+        self.relevance_model = relevance_model
+        self.relevance_messages_count = relevance_messages_count
         
         # Knowledge base
         self.knowledge_base = KnowledgeBaseStore(
@@ -147,7 +152,7 @@ class Bot:
         }
         
         # Generate knowledge base context from recent messages
-        context = self._generate_knowledge_context()
+        context = await self._generate_knowledge_context()
         
         # Let LLM decide what to do
         decision = await respond(self.messages, available_options, available_workflows, current_node_context, context)
@@ -212,15 +217,15 @@ class Bot:
         
         return removed_message_ids
     
-    def _generate_knowledge_context(self) -> str:
-        """Generate knowledge base context from recent conversation messages"""
+    async def _generate_knowledge_context(self) -> str:
+        """Generate knowledge base context from recent conversation messages with relevance filtering"""
         # Clear previous snippets
         self.last_knowledge_snippets = []
         
         if not self.messages:
             return ""
         
-        # Get the last n messages for context
+        # Get the last n messages for context retrieval
         recent_messages = self.messages[-self.context_messages_count:]
         
         # Create query string from recent messages
@@ -235,15 +240,55 @@ class Bot:
             return ""
         
         try:
-            # Retrieve relevant snippets from knowledge base
+            # Retrieve potential snippets from knowledge base
             snippets = self.knowledge_base.retrieve_snippets(query_string, top_k=3)
             
-            # Store snippets for frontend display
-            self.last_knowledge_snippets = snippets
+            if not snippets:
+                return ""
             
-            # Concatenate snippets into context
+            # Get messages for relevance evaluation (last n messages)
+            relevance_messages = self.messages[-self.relevance_messages_count:]
+            
+            # Run all relevance checks in parallel
+            relevance_tasks = [
+                is_relevant(
+                    messages=relevance_messages,
+                    snippet=snippet['content'],
+                    model=self.relevance_model
+                )
+                for snippet in snippets
+            ]
+            
+            try:
+                relevance_results = await asyncio.gather(*relevance_tasks)
+            except Exception as e:
+                print(f"Error during parallel relevance checking: {e}")
+                # Fallback: assume all snippets are relevant
+                relevance_results = [
+                    {
+                        'is_relevant': True,
+                        'confidence': 0.5,
+                        'reasoning': f"Relevance check failed: {str(e)}"
+                    }
+                    for _ in snippets
+                ]
+            
+            # Combine snippets with their relevance results and filter
+            relevant_snippets = []
+            for snippet, relevance_result in zip(snippets, relevance_results):
+                snippet_with_relevance = snippet.copy()
+                snippet_with_relevance['relevance'] = relevance_result
+                
+                # Only keep relevant snippets
+                if relevance_result['is_relevant']:
+                    relevant_snippets.append(snippet_with_relevance)
+            
+            # Store filtered snippets for frontend display
+            self.last_knowledge_snippets = relevant_snippets
+            
+            # Concatenate relevant snippets into context
             context_parts = []
-            for snippet in snippets:
+            for snippet in relevant_snippets:
                 # Add snippet content with source info
                 source_info = f"[From: {snippet['file_name']}]"
                 context_parts.append(f"{source_info}\n{snippet['content']}")
