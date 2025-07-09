@@ -27,7 +27,7 @@ class Message:
 
 
 class Bot:
-    def __init__(self, embedding_model: str = "text-embedding-3-small", knowledge_base_dir: str = "knowledge_base", cache_dir: str = ".cache", context_messages_count: int = 5, relevance_model: str = "gpt-4o", relevance_messages_count: int = 5):
+    def __init__(self, embedding_model: str = "text-embedding-3-small", knowledge_base_dir: str = "knowledge_base", cache_dir: str = ".cache", context_messages_count: int = 5, relevance_model: str = "gpt-4.1-mini", relevance_messages_count: int = 5, generator_model: str = "gpt-4.1"):
         # Former ConversationState fields
         self.messages: List[Message] = []
         self.next_message_id = 1
@@ -41,6 +41,9 @@ class Bot:
         # Relevance filtering parameters
         self.relevance_model = relevance_model
         self.relevance_messages_count = relevance_messages_count
+        
+        # Response generation parameters
+        self.generator_model = generator_model
         
         # Knowledge base
         self.knowledge_base = KnowledgeBaseStore(
@@ -155,7 +158,7 @@ class Bot:
         context = await self._generate_knowledge_context()
         
         # Let LLM decide what to do
-        decision = await respond(self.messages, available_options, available_workflows, current_node_context, context)
+        decision = await respond(self.messages, available_options, available_workflows, current_node_context, context, self.generator_model)
         
         bot_messages = []
         
