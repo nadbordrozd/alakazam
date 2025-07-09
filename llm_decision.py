@@ -109,32 +109,30 @@ Please evaluate whether this knowledge snippet is relevant to the conversation a
         elif llm_response.startswith("```") and llm_response.endswith("```"):
             llm_response = llm_response[3:-3].strip()  # Remove ``` and ```
         
-        # Try to parse as JSON
-        try:
-            result = json.loads(llm_response)
-            
-            # Validate the response structure
-            if not isinstance(result, dict):
-                raise ValueError("Response is not a dictionary")
-            
-            # Ensure all required keys exist with proper defaults
-            return {
-                "is_relevant": bool(result.get("is_relevant", False)),
-                "confidence": float(result.get("confidence", 0.0)),
-                "reasoning": str(result.get("reasoning", "No reasoning provided"))
-            }
-            
-        except (json.JSONDecodeError, ValueError, TypeError) as e:
-            # If JSON parsing fails, try to extract boolean from text
-            lower_response = llm_response.lower()
-            is_relevant = any(word in lower_response for word in ["true", "relevant", "yes", "useful"])
-            
-            return {
-                "is_relevant": is_relevant,
-                "confidence": 0.5,  # Medium confidence for fallback
-                "reasoning": f"Failed to parse structured response: {llm_response[:100]}..."
-            }
-    
+        # Parse as JSON
+        result = json.loads(llm_response)
+        
+        # Validate the response structure
+        if not isinstance(result, dict):
+            raise ValueError("Response is not a dictionary")
+        
+        # Ensure all required keys exist with proper defaults
+        return {
+            "is_relevant": bool(result.get("is_relevant", False)),
+            "confidence": float(result.get("confidence", 0.0)),
+            "reasoning": str(result.get("reasoning", "No reasoning provided"))
+        }
+        
+    except (json.JSONDecodeError, ValueError, TypeError) as e:
+        # If JSON parsing fails, try to extract boolean from text
+        lower_response = llm_response.lower()
+        is_relevant = any(word in lower_response for word in ["true", "relevant", "yes", "useful"])
+        
+        return {
+            "is_relevant": is_relevant,
+            "confidence": 0.5,  # Medium confidence for fallback
+            "reasoning": f"Failed to parse structured response: {llm_response[:100]}..."
+        }
     except Exception as e:
         # Handle any API errors gracefully
         return {
@@ -145,20 +143,20 @@ Please evaluate whether this knowledge snippet is relevant to the conversation a
 
 async def respond(
     messages: List[Any],  # List of Message objects
-    available_options: List[str], 
     available_workflows: List[str],
-    current_node_context: Dict[str, Any],
-    context: str
+    active_node: Optional[Any],  # WorkflowNode object or None
+    context: str,
+    model: str = "gpt-4o"
 ) -> Dict[str, Optional[str]]:
     """
     Generate LLM response to determine next action.
     
     Args:
         messages: List of Message objects from the conversation
-        available_options: Current workflow options (empty if no active workflow)
         available_workflows: Available workflow names
-        current_node_context: Context about the current workflow node
+        active_node: Current workflow node object (WorkflowNode or None)
         context: Relevant knowledge base snippets for context
+        model: LLM model to use for response generation
     
     Returns:
         Dict with keys:
@@ -169,6 +167,9 @@ async def respond(
     
     # Convert messages to OpenAI format and build the message list
     conversation_messages = _convert_messages_to_openai_format(messages)
+    
+    # Extract available options from active node
+    available_options = list(active_node.options.keys()) if active_node else []
     
     # Create the system prompt
     context_section = context if context.strip() else "No specific context available for this conversation."
@@ -213,8 +214,8 @@ IMPORTANT RULES:
 
     # Create context message about current state
     context_parts = []
-    if current_node_context.get('node_name'):
-        context_parts.append(f"Current workflow node: {current_node_context['node_name']}")
+    if active_node and active_node.name:
+        context_parts.append(f"Current workflow node: {active_node.name}")
     if available_options:
         context_parts.append(f"Available options: {available_options}")
     context_parts.append(f"Available workflows: {available_workflows}")
@@ -230,7 +231,7 @@ IMPORTANT RULES:
         # Call OpenAI API via async client
         llm_response = await get_completion_async(
             messages=api_messages,
-            model="gpt-4o",  # Updated to use gpt-4o (latest model)
+            model=model,
             temperature=0.3  # Lower temperature for more consistent responses
         )
         
@@ -243,45 +244,43 @@ IMPORTANT RULES:
         elif llm_response.startswith("```") and llm_response.endswith("```"):
             llm_response = llm_response[3:-3].strip()  # Remove ``` and ```
         
-        # Try to parse as JSON
-        try:
-            decision = json.loads(llm_response)
-            
-            # Validate the response structure
-            if not isinstance(decision, dict):
-                raise ValueError("Response is not a dictionary")
-            
-            # Ensure all required keys exist with proper defaults
-            result = {
-                "text": decision.get("text"),  # Can be None/null
-                "decision_option": decision.get("decision_option"),
-                "workflow": decision.get("workflow")
-            }
-            
-            # Validate that decision_option is in available_options if provided
-            if result["decision_option"] and result["decision_option"] not in available_options:
-                result["decision_option"] = None
-                result["text"] = "I'm not sure which option you mean. Could you be more specific?"
-            
-            # Validate that workflow is in available_workflows if provided
-            if result["workflow"] and result["workflow"] not in available_workflows:
-                result["workflow"] = None
-                result["text"] = "I'm not sure which workflow you want to start. Could you be more specific?"
-            
-            # If no action was taken and no text provided, give a default response
-            if not result["decision_option"] and not result["workflow"] and not result["text"]:
-                result["text"] = "I'm not sure how to help with that. Could you be more specific?"
-            
-            return result
-            
-        except json.JSONDecodeError:
-            # If JSON parsing fails, treat the entire response as text
-            return {
-                "text": llm_response if llm_response else "I'm having trouble understanding. Could you rephrase that?",
-                "decision_option": None,
-                "workflow": None
-            }
-    
+        # Parse as JSON
+        decision = json.loads(llm_response)
+        
+        # Validate the response structure
+        if not isinstance(decision, dict):
+            raise ValueError("Response is not a dictionary")
+        
+        # Ensure all required keys exist with proper defaults
+        result = {
+            "text": decision.get("text"),  # Can be None/null
+            "decision_option": decision.get("decision_option"),
+            "workflow": decision.get("workflow")
+        }
+        
+        # Validate that decision_option is in available_options if provided
+        if result["decision_option"] and result["decision_option"] not in available_options:
+            result["decision_option"] = None
+            result["text"] = "I'm not sure which option you mean. Could you be more specific?"
+        
+        # Validate that workflow is in available_workflows if provided
+        if result["workflow"] and result["workflow"] not in available_workflows:
+            result["workflow"] = None
+            result["text"] = "I'm not sure which workflow you want to start. Could you be more specific?"
+        
+        # If no action was taken and no text provided, give a default response
+        if not result["decision_option"] and not result["workflow"] and not result["text"]:
+            result["text"] = "I'm not sure how to help with that. Could you be more specific?"
+        
+        return result
+        
+    except json.JSONDecodeError:
+        # If JSON parsing fails, treat the entire response as text
+        return {
+            "text": llm_response if llm_response else "I'm having trouble understanding. Could you rephrase that?",
+            "decision_option": None,
+            "workflow": None
+        }
     except Exception as e:
         # Handle any API errors gracefully
         return {

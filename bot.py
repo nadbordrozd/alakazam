@@ -27,7 +27,15 @@ class Message:
 
 
 class Bot:
-    def __init__(self, embedding_model: str = "text-embedding-3-small", knowledge_base_dir: str = "knowledge_base", cache_dir: str = ".cache", context_messages_count: int = 5, relevance_model: str = "gpt-4.1-mini", relevance_messages_count: int = 5, generator_model: str = "gpt-4.1"):
+    def __init__(self, 
+        embedding_model: str = "text-embedding-3-small", 
+        knowledge_base_dir: str = "knowledge_base", 
+        cache_dir: str = ".cache", 
+        context_messages_count: int = 5, 
+        relevance_model: str = "gpt-4.1-mini", 
+        relevance_messages_count: int = 5, 
+        generator_model: str = "gpt-4.1"
+    ):
         # Former ConversationState fields
         self.messages: List[Message] = []
         self.next_message_id = 1
@@ -147,18 +155,13 @@ class Bot:
     async def process_bot_response(self) -> List[Message]:
         """Process bot response based on the last user message"""
         # Get context for LLM decision
-        available_options = list(self.active_node.options.keys()) if self.active_node else []
         available_workflows = list(self.workflows.keys())
-        current_node_context = {
-            'node_name': self.active_node.name if self.active_node else None,
-            'available_options': available_options
-        }
         
         # Generate knowledge base context from recent messages
         context = await self._generate_knowledge_context()
         
         # Let LLM decide what to do
-        decision = await respond(self.messages, available_options, available_workflows, current_node_context, context, self.generator_model)
+        decision = await respond(self.messages, available_workflows, self.active_node, context, self.generator_model)
         
         bot_messages = []
         
