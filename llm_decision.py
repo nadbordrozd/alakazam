@@ -75,11 +75,8 @@ You must respond with a valid JSON object containing exactly these fields:
 
 Be precise in your judgment and provide clear reasoning."""
 
-    # Create the evaluation prompt
-    conversation_text = "\n".join([f"{msg['role']}: {msg['content']}" for msg in conversation_messages])
-    
-    evaluation_prompt = f"""CONVERSATION:
-{conversation_text}
+    # Create the evaluation prompt for the snippet
+    evaluation_prompt = f"""Based on the conversation above, please evaluate whether this knowledge snippet is relevant:
 
 KNOWLEDGE SNIPPET TO EVALUATE:
 {snippet}
@@ -87,10 +84,10 @@ KNOWLEDGE SNIPPET TO EVALUATE:
 Please evaluate whether this knowledge snippet is relevant to the conversation and could be useful for answering the user's questions or providing better responses."""
 
     # Build the full message list for OpenAI
-    api_messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": evaluation_prompt}
-    ]
+    # Start with system prompt, then conversation history, then evaluation request
+    api_messages = [{"role": "system", "content": system_prompt}]
+    api_messages.extend(conversation_messages)
+    api_messages.append({"role": "user", "content": evaluation_prompt})
 
     try:
         # Call OpenAI API via async client
