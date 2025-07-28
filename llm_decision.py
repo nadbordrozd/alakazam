@@ -220,7 +220,7 @@ IMPORTANT RULES:
         context_parts.append(f"Available options: {available_options}")
     context_parts.append(f"Available workflows: {available_workflows}")
     
-    context_message = "Context: " + " | ".join(context_parts)
+    context_message = "Context: " + " = ".join(context_parts)
 
     # Build the full message list for OpenAI
     api_messages = [{"role": "system", "content": system_prompt}]
