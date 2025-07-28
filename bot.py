@@ -3,7 +3,7 @@ from datetime import datetime
 from dataclasses import dataclass
 import asyncio
 from workflow import Workflow, WorkflowNode
-from llm_decision import respond, is_relevant
+from llm_decision import respond, is_relevant, rewrite_query_for_search
 from knowledge_base_store import KnowledgeBaseStore
 
 # Unified message class for both user and bot messages
@@ -34,7 +34,8 @@ class Bot:
         context_messages_count: int = 5, 
         relevance_model: str = "gpt-4.1-mini", 
         relevance_messages_count: int = 5, 
-        generator_model: str = "gpt-4.1"
+        generator_model: str = "gpt-4.1",
+        rewriter_model: str = "gpt-4o-mini"
     ):
         # Former ConversationState fields
         self.messages: List[Message] = []
@@ -52,6 +53,9 @@ class Bot:
         
         # Response generation parameters
         self.generator_model = generator_model
+        
+        # Query rewriting parameters
+        self.rewriter_model = rewriter_model
         
         # Knowledge base
         self.knowledge_base = KnowledgeBaseStore(
@@ -231,15 +235,18 @@ class Bot:
         if not self.messages:
             return ""
         
-        # Get the last n messages for context retrieval
-        recent_messages = self.messages[-self.context_messages_count:]
-        
-        # Create query string from recent messages
-        query_parts = []
-        for message in recent_messages:
-            query_parts.append(message.text)
-        
-        query_string = " ".join(query_parts)
+        # Use query rewriter to generate an effective search query from the entire conversation
+        try:
+            query_string = await rewrite_query_for_search(self.messages, self.rewriter_model)
+        except Exception as e:
+            print(f"Error rewriting query: {e}")
+            # Fallback: use the last user message
+            last_user_msg = None
+            for message in reversed(self.messages):
+                if message.role == "user":
+                    last_user_msg = message.text
+                    break
+            query_string = last_user_msg or ""
         
         # Don't query if there's no meaningful content
         if not query_string.strip():

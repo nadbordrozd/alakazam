@@ -285,3 +285,92 @@ IMPORTANT RULES:
             "decision_option": None,
             "workflow": None
         }
+
+
+async def rewrite_query_for_search(
+    messages: List[Any],  # List of Message objects
+    model: str = "gpt-4o"
+) -> str:
+    """
+    Rewrite conversation history into an effective search query for knowledge base retrieval.
+    
+    Analyzes the conversation to extract the most relevant search terms, focusing on:
+    - Recent conversation turns (most important)
+    - Overall context when recent turns are follow-ups
+    - Long-term topics that are still active
+    - Ignoring abandoned discussion threads
+    
+    Args:
+        messages: List of conversation messages (Message objects)
+        model: LLM model to use for query rewriting
+        
+    Returns:
+        Rewritten search query string (may be multi-line)
+    """
+    
+    # Convert messages to OpenAI format
+    conversation_messages = _convert_messages_to_openai_format(messages)
+    
+    # Create the system prompt for query rewriting
+    system_prompt = """You are an expert at analyzing conversations and creating effective search queries for knowledge retrieval. Your task is to analyze a conversation and generate a search query that will help find the most relevant information from a knowledge base.
+
+ANALYSIS GUIDELINES:
+1. **Focus on Recent Context**: Prioritize the most recent 2-3 exchanges, as these represent the current focus
+2. **Handle Follow-ups**: If recent messages are follow-up questions, include the original context they reference
+3. **Identify Active Topics**: Distinguish between active discussion threads and abandoned ones
+4. **Deep Dive Recognition**: For conversations that explore one topic deeply, include the overarching problem/question
+5. **Context Preservation**: Ensure follow-up questions make sense by including their reference point
+
+QUERY CONSTRUCTION RULES:
+- Generate search terms that would find relevant knowledge base articles
+- Use natural language that matches how information might be stored
+- Include specific entities, concepts, or problems mentioned
+- Multiple lines/questions are allowed if they address different aspects of the same inquiry
+- Focus on information needs, not conversational elements
+- Avoid overly generic terms unless they provide essential context
+
+OUTPUT FORMAT:
+Return only the search query text. No explanations, no metadata. The query should be ready to use for semantic search.
+
+EXAMPLES:
+User asks "What makes a good pet?" → "good pet characteristics traits suitable Pokemon companionship"
+Follow-up "What about safety?" → "Pokemon pet safety considerations dangerous traits behavior good pet"
+Deep dive on Slowpoke care → "Slowpoke care requirements pet suitability behavior characteristics safety"
+Topic change from pets to food → Focus only on the food question, ignore pet discussion
+
+Be concise but comprehensive enough to retrieve relevant information."""
+
+    # Create the analysis prompt
+    analysis_prompt = """Based on the conversation above, generate an effective search query for finding relevant information from a knowledge base.
+
+Analyze the conversation flow, identify the current focus, and create a search query that would retrieve the most helpful information for continuing this discussion."""
+
+    # Build the full message list for OpenAI
+    api_messages = [{"role": "system", "content": system_prompt}]
+    api_messages.extend(conversation_messages)
+    api_messages.append({"role": "user", "content": analysis_prompt})
+
+    try:
+        # Call OpenAI API via async client
+        query_response = await get_completion_async(
+            messages=api_messages,
+            model=model,
+            temperature=0.3  # Lower temperature for more focused, consistent queries
+        )
+        
+        # Clean and return the query
+        return query_response.strip()
+        
+    except Exception as e:
+        # Fallback: use the last user message as search query if LLM fails
+        if conversation_messages:
+            last_user_msg = None
+            for msg in reversed(conversation_messages):
+                if msg.get('role') == 'user':
+                    last_user_msg = msg.get('content', '')
+                    break
+            if last_user_msg:
+                return last_user_msg
+        
+        # Ultimate fallback
+        return "general information help"
