@@ -2,7 +2,7 @@
 LLM Client for embedding and completion operations using OpenAI API.
 """
 
-from typing import List, Dict
+from typing import List, Dict, Optional, Any
 import os
 import yaml
 import time
@@ -174,71 +174,12 @@ def get_embedding(
     return result
 
 
-def get_completion(
-    messages: List[Dict[str, str]],
-    model: str = "gpt-4o",
-    temperature: float = 0.7
-) -> str:
-    """
-    Get completion from OpenAI chat completions API (synchronous).
-    
-    Args:
-        messages: List of message dictionaries with 'role' and 'content' keys
-        model: Model to use for completion
-        temperature: Sampling temperature (0-2)
-        
-    Returns:
-        Generated completion text
-    """
-    start_time = time.time()
-    error = None
-    response_data = None
-    
-    try:
-        response = client.chat.completions.create(
-            model=model,
-            messages=messages,
-            temperature=temperature
-        )
-        
-        result = response.choices[0].message.content
-        
-        response_data = {
-            'content': result,
-            'finish_reason': response.choices[0].finish_reason,
-            'usage': response.usage.model_dump() if response.usage else None,
-            'model': response.model
-        }
-        
-    except Exception as e:
-        error = str(e)
-        result = None
-        response_data = {'error': error}
-    
-    finally:
-        duration = time.time() - start_time
-        
-        # Log the call
-        input_data = {
-            'messages': messages,
-            'model': model,
-            'temperature': temperature,
-            'message_count': len(messages),
-            'total_input_chars': sum(len(str(msg.get('content', ''))) for msg in messages)
-        }
-        
-        log_llm_call('completion', input_data, response_data, duration, error)
-    
-    if error:
-        raise Exception(error)
-    
-    return result
-
-
 async def get_completion_async(
     messages: List[Dict[str, str]],
     model: str = "gpt-4o",
-    temperature: float = 0.7
+    temperature: float = 0.7,
+    tools: Optional[List[Dict[str, Any]]] = None,
+    tool_choice: Optional[str] = None
 ) -> str:
     """
     Get completion from OpenAI chat completions API (asynchronous).
@@ -247,28 +188,41 @@ async def get_completion_async(
         messages: List of message dictionaries with 'role' and 'content' keys
         model: Model to use for completion
         temperature: Sampling temperature (0-2)
+        tools: Optional list of tool definitions for function calling
+        tool_choice: Optional tool choice strategy ("auto", "none", or specific tool)
         
     Returns:
-        Generated completion text
+        Generated completion text (tool calls are not executed, just returned as text)
     """
     start_time = time.time()
     error = None
     response_data = None
     
     try:
-        response = await async_client.chat.completions.create(
-            model=model,
-            messages=messages,
-            temperature=temperature
-        )
+        # Build API parameters
+        api_params = {
+            "model": model,
+            "messages": messages,
+            "temperature": temperature
+        }
         
-        result = response.choices[0].message.content
+        # Add tools if provided
+        if tools:
+            api_params["tools"] = tools
+            if tool_choice:
+                api_params["tool_choice"] = tool_choice
+        
+        response = await async_client.chat.completions.create(**api_params)
+        
+        message = response.choices[0].message
+        result = message.content
         
         response_data = {
             'content': result,
             'finish_reason': response.choices[0].finish_reason,
             'usage': response.usage.model_dump() if response.usage else None,
-            'model': response.model
+            'model': response.model,
+            'tool_calls': [call.model_dump() for call in message.tool_calls] if message.tool_calls else None
         }
         
     except Exception as e:
@@ -285,7 +239,9 @@ async def get_completion_async(
             'model': model,
             'temperature': temperature,
             'message_count': len(messages),
-            'total_input_chars': sum(len(str(msg.get('content', ''))) for msg in messages)
+            'total_input_chars': sum(len(str(msg.get('content', ''))) for msg in messages),
+            'tools_provided': len(tools) if tools else 0,
+            'tool_choice': tool_choice
         }
         
         log_llm_call('completion_async', input_data, response_data, duration, error)
