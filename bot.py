@@ -2,9 +2,11 @@ from typing import Dict, Optional, Any, List
 from datetime import datetime
 from dataclasses import dataclass
 import asyncio
+import json
 from workflow import Workflow, WorkflowNode
 from llm_decision import respond, is_relevant, rewrite_query_for_search
 from knowledge_base_store import KnowledgeBaseStore
+from tools import TOOL_REGISTRY
 
 # Unified message class for both user and bot messages
 @dataclass
@@ -12,8 +14,10 @@ class Message:
     id: int
     timestamp: datetime
     text: str
-    role: str  # "user" or "bot"
+    role: str  # "user", "bot", "tool"
     node: Optional[WorkflowNode] = None  # Only used for user messages
+    tool_call_id: Optional[str] = None  # Only used for tool messages
+    tool_calls: Optional[List[Dict]] = None  # Only used for assistant messages with tool calls
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert message to dictionary for serialization"""
@@ -91,13 +95,37 @@ class Bot:
         self.next_message_id += 1
         return message
     
+    def add_tool_message(self, text: str, tool_call_id: str) -> Message:
+        """Add a tool result message to conversation history"""
+        message = Message(
+            id=self.next_message_id,
+            timestamp=datetime.now(),
+            text=text,
+            role="tool",
+            tool_call_id=tool_call_id
+        )
+        self.messages.append(message)
+        self.next_message_id += 1
+        return message
+    
+    def add_assistant_message_with_tool_calls(self, text: str, tool_calls: List[Dict]) -> Message:
+        """Add an assistant message with tool calls to conversation history"""
+        message = Message(
+            id=self.next_message_id,
+            timestamp=datetime.now(),
+            text=text,
+            role="bot",
+            tool_calls=tool_calls
+        )
+        self.messages.append(message)
+        self.next_message_id += 1
+        return message
+    
     def set_active_node(self, node: WorkflowNode):
         """Set the active node (and update workflow position tracking)"""
         if node and node.workflow:
             self.workflow_positions[node.workflow.name] = node
         self.active_node = node
-    
-
     
     def can_go_back(self) -> bool:
         """Check if we can go back"""
@@ -150,45 +178,106 @@ class Bot:
         yield user_msg
         
         # Process bot response (may take time with LLM)
-        bot_messages = await self.process_bot_response()
+        bot_messages = await self.generate_response()
         
         # Yield each bot message
         for bot_msg in bot_messages:
             yield bot_msg
     
-    async def process_bot_response(self) -> List[Message]:
-        """Process bot response based on the last user message"""
+    async def generate_response(self) -> List[Message]:
+        """Process bot response based on the last user message, with tool calling support"""
         # Get context for LLM decision
         available_workflows = list(self.workflows.keys())
         
-        # Generate knowledge base context from recent messages
+        # Generate knowledge base context from recent messages (once, reused throughout)
         context = await self._generate_knowledge_context()
-        
-        # Let LLM decide what to do
-        decision = await respond(self.messages, available_workflows, self.active_node, context, self.generator_model)
+
+        # Prepare tools for function calling
+        tools = [tool_info["definition"] for tool_info in TOOL_REGISTRY.values()]
         
         bot_messages = []
+        max_tool_calls = 10
         
-        # Process LLM decision
-        # First, if LLM provided text, always send it
-        if decision.get("text"):
-            bot_msg = self.add_bot_message(decision["text"])
-            bot_messages.append(bot_msg)
-        
-        # Then, if there's a decision option, process it
-        if decision.get("decision_option"):
-            if self.active_node and decision["decision_option"] in self.active_node.options:
-                next_node = self.active_node.next(decision["decision_option"])
-                self.set_active_node(next_node)
-                bot_text = self._get_bot_text(next_node)
-                bot_msg = self.add_bot_message(bot_text)
+        # Tool calling loop - continue until no tool calls or max iterations reached
+        for iteration in range(max_tool_calls):
+            # Let LLM decide what to do (with tool support)
+            decision = await respond(
+                self.messages, 
+                available_workflows, 
+                self.active_node, 
+                context, 
+                self.generator_model,
+                tools=tools
+            )
+            
+            # Check if there are tool calls to execute
+            tool_calls = decision.get("tool_calls", [])
+            if tool_calls:
+                # First, add the assistant message with tool calls to conversation
+                assistant_msg = self.add_assistant_message_with_tool_calls(
+                    decision.get("text") or "I'll look that up for you.",
+                    tool_calls
+                )
+                
+                # Execute each tool call and add tool responses
+                for tool_call in tool_calls:
+                    tool_call_id = tool_call.get("id")
+                    tool_name = tool_call.get("function", {}).get("name")
+                    tool_args_str = tool_call.get("function", {}).get("arguments", "{}")
+                    
+                    # Parse arguments if they're a string
+                    try:
+                        if isinstance(tool_args_str, str):
+                            tool_args = json.loads(tool_args_str)
+                        else:
+                            tool_args = tool_args_str
+                    except json.JSONDecodeError:
+                        tool_args = {}
+                    
+                    # Execute the tool if it exists in our registry
+                    if tool_name in TOOL_REGISTRY:
+                        try:
+                            # Execute the tool function
+                            tool_result = TOOL_REGISTRY[tool_name]["function"](**tool_args)
+                            
+                            # Add tool result to conversation history with proper tool_call_id
+                            tool_msg = self.add_tool_message(tool_result, tool_call_id)
+                            
+                        except Exception as e:
+                            # Handle tool execution errors
+                            error_result = f"Error executing tool '{tool_name}': {str(e)}"
+                            tool_msg = self.add_tool_message(error_result, tool_call_id)
+                    else:
+                        # Tool not found
+                        error_result = f"Tool '{tool_name}' not found in registry"
+                        tool_msg = self.add_tool_message(error_result, tool_call_id)
+                
+                # Continue loop to get new response with tool results
+                continue
+            
+            # No tool calls - process regular LLM decision
+            # First, if LLM provided text, always send it
+            if decision.get("text"):
+                bot_msg = self.add_bot_message(decision["text"])
                 bot_messages.append(bot_msg)
-        
-        # Then, if there's a workflow to start, process it
-        elif decision.get("workflow"):
-            if decision["workflow"] in self.workflows:
-                bot_msg = self.start_workflow(decision["workflow"])
-                bot_messages.append(bot_msg)
+            
+            # Then, if there's a decision option, process it
+            if decision.get("decision_option"):
+                if self.active_node and decision["decision_option"] in self.active_node.options:
+                    next_node = self.active_node.next(decision["decision_option"])
+                    self.set_active_node(next_node)
+                    bot_text = self._get_bot_text(next_node)
+                    bot_msg = self.add_bot_message(bot_text)
+                    bot_messages.append(bot_msg)
+            
+            # Then, if there's a workflow to start, process it
+            elif decision.get("workflow"):
+                if decision["workflow"] in self.workflows:
+                    bot_msg = self.start_workflow(decision["workflow"])
+                    bot_messages.append(bot_msg)
+            
+            # Exit loop after processing regular response
+            break
         
         return bot_messages
     
@@ -285,7 +374,7 @@ class Bot:
                     }
                     for _ in snippets
                 ]
-            
+
             # Combine snippets with their relevance results and filter
             relevant_snippets = []
             for snippet, relevance_result in zip(snippets, relevance_results):
@@ -298,14 +387,14 @@ class Bot:
             
             # Store filtered snippets for frontend display
             self.last_knowledge_snippets = relevant_snippets
-            
+
             # Concatenate relevant snippets into context
             context_parts = []
             for snippet in relevant_snippets:
                 # Add snippet content with source info
                 source_info = f"[From: {snippet['file_name']}]"
                 context_parts.append(f"{source_info}\n{snippet['content']}")
-            
+
             return "\n\n".join(context_parts)
             
         except Exception as e:
