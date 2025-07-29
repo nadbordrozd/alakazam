@@ -72,7 +72,7 @@ class ChatApp {
             this.messageInput.value = '';
             
             // Step 2: Process bot response (this may take time with LLM)
-            const botResponse = await fetch('/api/process_bot_response', {
+            const botResponse = await fetch('/api/generate_response', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             });
