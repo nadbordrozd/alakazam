@@ -58,8 +58,8 @@ def send_message():
         'can_go_back': bot.can_go_back()
     })
 
-@app.route('/api/process_bot_response', methods=['POST'])
-def process_bot_response():
+@app.route('/api/generate_response', methods=['POST'])
+def generate_response():
     """Process bot response based on the last user message"""
     import asyncio
     
@@ -75,7 +75,7 @@ def process_bot_response():
             return jsonify({'error': 'No user message to process'}), 400
         
         # Let the Bot handle the response processing (may use LLM internally)
-        bot_messages = asyncio.run(bot.process_bot_response())
+        bot_messages = asyncio.run(bot.generate_response())
         
         # Convert to dict format
         new_bot_messages = [msg.to_dict() for msg in bot_messages]
@@ -97,7 +97,7 @@ def process_bot_response():
         # Enhanced error logging for debugging
         import traceback
         error_trace = traceback.format_exc()
-        print(f"Error in process_bot_response: {error_trace}")
+        print(f"Error in generate_response: {error_trace}")
         return jsonify({'error': f'Failed to process bot response: {str(e)}'}), 500
 
 @app.route('/api/go_back', methods=['POST'])
