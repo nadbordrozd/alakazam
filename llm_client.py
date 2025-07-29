@@ -180,7 +180,7 @@ async def get_completion_async(
     temperature: float = 0.7,
     tools: Optional[List[Dict[str, Any]]] = None,
     tool_choice: Optional[str] = None
-) -> str:
+) -> Dict[str, Any]:
     """
     Get completion from OpenAI chat completions API (asynchronous).
     
@@ -192,7 +192,7 @@ async def get_completion_async(
         tool_choice: Optional tool choice strategy ("auto", "none", or specific tool)
         
     Returns:
-        Generated completion text (tool calls are not executed, just returned as text)
+        Dictionary with 'content' (text) and 'tool_calls' (list of tool calls if any)
     """
     start_time = time.time()
     error = None
@@ -215,19 +215,24 @@ async def get_completion_async(
         response = await async_client.chat.completions.create(**api_params)
         
         message = response.choices[0].message
-        result = message.content
+        
+        # Prepare the result dictionary
+        result = {
+            'content': message.content,
+            'tool_calls': [call.model_dump() for call in message.tool_calls] if message.tool_calls else []
+        }
         
         response_data = {
-            'content': result,
+            'content': message.content,
             'finish_reason': response.choices[0].finish_reason,
             'usage': response.usage.model_dump() if response.usage else None,
             'model': response.model,
-            'tool_calls': [call.model_dump() for call in message.tool_calls] if message.tool_calls else None
+            'tool_calls': result['tool_calls'] if result['tool_calls'] else None
         }
         
     except Exception as e:
         error = str(e)
-        result = None
+        result = {'content': None, 'tool_calls': []}
         response_data = {'error': error}
     
     finally:
