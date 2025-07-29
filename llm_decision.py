@@ -5,7 +5,7 @@ from typing import List, Dict, Optional, Any, Union
 from llm_client import get_completion_async
 
 
-def _convert_messages_to_openai_format(messages: List[Any]) -> List[Dict[str, str]]:
+def _convert_messages_to_openai_format(messages: List[Any]) -> List[Dict[str, Any]]:
     """
     Convert Message objects to OpenAI chat format.
     
@@ -13,14 +13,29 @@ def _convert_messages_to_openai_format(messages: List[Any]) -> List[Dict[str, st
         messages: List of Message objects
         
     Returns:
-        List of dictionaries with 'role' and 'content' keys for OpenAI API
+        List of dictionaries compatible with OpenAI API (including tool calls and tool responses)
     """
     openai_messages = []
     for message in messages:
-        openai_messages.append({
-            "role": "assistant" if message.role == "bot" else message.role,
+        # Convert role
+        role = "assistant" if message.role == "bot" else message.role
+        
+        # Build base message
+        openai_msg = {
+            "role": role,
             "content": message.text
-        })
+        }
+        
+        # Add tool_calls for assistant messages
+        if hasattr(message, 'tool_calls') and message.tool_calls:
+            openai_msg["tool_calls"] = message.tool_calls
+        
+        # Add tool_call_id for tool messages  
+        if hasattr(message, 'tool_call_id') and message.tool_call_id:
+            openai_msg["tool_call_id"] = message.tool_call_id
+        
+        openai_messages.append(openai_msg)
+    
     return openai_messages
 
 async def is_relevant(
@@ -95,8 +110,8 @@ Please evaluate whether this knowledge snippet is relevant to the conversation a
             messages=api_messages,
             model=model,
             temperature=0.1  # Low temperature for consistent relevance judgments
-        )
-        
+        )['content']
+
         # Extract and clean the response content
         llm_response = llm_response.strip()
         
@@ -143,7 +158,8 @@ async def respond(
     available_workflows: List[str],
     active_node: Optional[Any],  # WorkflowNode object or None
     context: str,
-    model: str = "gpt-4o"
+    model: str = "gpt-4o",
+    tools: Optional[List[Dict]] = None
 ) -> Dict[str, Optional[str]]:
     """
     Generate LLM response to determine next action.
@@ -154,12 +170,14 @@ async def respond(
         active_node: Current workflow node object (WorkflowNode or None)
         context: Relevant knowledge base snippets for context
         model: LLM model to use for response generation
+        tools: Optional list of tool definitions for function calling
     
     Returns:
         Dict with keys:
         - "text": Response text (only if no option/workflow chosen)
         - "decision_option": Which workflow option to select (optional)
         - "workflow": Which workflow to start/switch to (optional)
+        - "tool_calls": List of tool calls if any (optional)
     """
     
     # Convert messages to OpenAI format and build the message list
@@ -176,12 +194,16 @@ async def respond(
 1. Understand what the user wants to do based on their input and conversation history
 2. Decide the appropriate next action from the available options
 3. Provide helpful, conversational responses
+4. Use available tools when you need specific information (like Pokemon health records)
 
-You have three types of actions you can take:
+You have access to tools for looking up information when needed. Use them whenever users ask about specific data that might be in external systems.
 
-1. **Select a workflow option**: If the user's input matches one of the available workflow options, select it
-2. **Start a workflow**: If the user wants to begin a new workflow that's available
-3. **Provide a response**: If neither of the above apply, give a helpful conversational response
+You have four types of actions you can take:
+
+1. **Use a tool**: If the user asks for specific information that requires a lookup (like Pokemon health data), use the appropriate tool
+2. **Select a workflow option**: If the user's input matches one of the available workflow options, select it
+3. **Start a workflow**: If the user wants to begin a new workflow that's available
+4. **Provide a response**: If none of the above apply, give a helpful conversational response
 
 AVAILABLE WORKFLOWS:
 - edibility_determination: Help determine if a Pokemon is safe to eat
@@ -225,12 +247,28 @@ IMPORTANT RULES:
     api_messages.append({"role": "user", "content": context_message})
 
     try:
-        # Call OpenAI API via async client
-        llm_response = await get_completion_async(
+        # Call OpenAI API via async client with tool support
+        llm_result = await get_completion_async(
             messages=api_messages,
             model=model,
-            temperature=0.3  # Lower temperature for more consistent responses
+            temperature=0.3,  # Lower temperature for more consistent responses
+            tools=tools
         )
+        
+        # Check if there are tool calls
+        if llm_result['tool_calls']:
+            # Return tool calls for execution
+            return {
+                "text": None,
+                "decision_option": None,
+                "workflow": None,
+                "tool_calls": llm_result['tool_calls']
+            }
+        
+        # No tool calls - process as regular JSON response
+        llm_response = llm_result['content']
+        if not llm_response:
+            raise ValueError("No content returned from LLM")
         
         # Extract and clean the response content
         llm_response = llm_response.strip()
@@ -252,7 +290,8 @@ IMPORTANT RULES:
         result = {
             "text": decision.get("text"),  # Can be None/null
             "decision_option": decision.get("decision_option"),
-            "workflow": decision.get("workflow")
+            "workflow": decision.get("workflow"),
+            "tool_calls": []  # No tool calls in this path
         }
         
         # Validate that decision_option is in available_options if provided
